@@ -6,11 +6,17 @@ export class GameLoop {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
+        this.offscreenCanvas = document.createElement('canvas');
+        this.offscreenCtx = this.offscreenCanvas.getContext('2d');
+        
         this.arrows = [];
         this.tileSize = 0;
         this.isRunning = false;
         this.lastTime = 0;
+        this.accumulator = 0;
+        this.fixedDelta = 1000 / 60; // Fixed 60 FPS step (16.67ms)
         this.hasClaimedReward = false;
+        this.gridDirty = true;
         
         window.addEventListener('resize', () => this.resizeCanvas());
         window.addEventListener('orientationchange', () => setTimeout(() => this.resizeCanvas(), 100));
@@ -85,6 +91,8 @@ export class GameLoop {
         this.isRunning = true;
         this.hasClaimedReward = false;
         this.lastTime = performance.now();
+        this.accumulator = 0;
+        this.gridDirty = true;
         this.setupEngineEvents();
         this.syncArrowsFromEngine();
         this.resizeCanvas();
@@ -139,16 +147,41 @@ export class GameLoop {
         this.canvas.style.width = size + 'px';
         this.canvas.style.height = size + 'px';
         
+        this.offscreenCanvas.width = this.canvas.width;
+        this.offscreenCanvas.height = this.canvas.height;
+        
         if (this.ctx.resetTransform) {
             this.ctx.resetTransform();
+            this.offscreenCtx.resetTransform();
         } else {
             this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+            this.offscreenCtx.setTransform(1, 0, 0, 1, 0, 0);
         }
         this.ctx.scale(dpr, dpr);
+        this.offscreenCtx.scale(dpr, dpr);
         
         if (loader.engine && loader.engine.board) {
             this.tileSize = size / loader.engine.board.width;
         }
+        this.gridDirty = true;
+    }
+
+    renderOffscreenGrid(width, rectWidth, rectHeight) {
+        this.offscreenCtx.clearRect(0, 0, rectWidth, rectHeight);
+        this.offscreenCtx.strokeStyle = '#334155';
+        this.offscreenCtx.lineWidth = 1;
+        for(let i=0; i<=width; i++) {
+            this.offscreenCtx.beginPath();
+            this.offscreenCtx.moveTo(i * this.tileSize, 0);
+            this.offscreenCtx.lineTo(i * this.tileSize, rectHeight);
+            this.offscreenCtx.stroke();
+            
+            this.offscreenCtx.beginPath();
+            this.offscreenCtx.moveTo(0, i * this.tileSize);
+            this.offscreenCtx.lineTo(rectWidth, i * this.tileSize);
+            this.offscreenCtx.stroke();
+        }
+        this.gridDirty = false;
     }
 
     handleInput(e) {
@@ -179,14 +212,19 @@ export class GameLoop {
     render(time) {
         if (!this.isRunning) return;
         
-        const dt = (time - this.lastTime) / 1000;
+        const frameDelta = time - this.lastTime;
         this.lastTime = time;
+        this.accumulator += Math.min(frameDelta, 100); // Cap frame spikes
         
-        if (loader.engine && dt > 0 && dt < 1 && !loader.engine.is_paused) {
-            loader.engine.tick_timer(dt);
-            this.syncHUD();
+        while (this.accumulator >= this.fixedDelta) {
+            const dt = this.fixedDelta / 1000;
+            if (loader.engine && !loader.engine.is_paused) {
+                loader.engine.tick_timer(dt);
+            }
+            this.accumulator -= this.fixedDelta;
         }
-        
+        this.syncHUD();
+
         const rect = this.canvas.getBoundingClientRect();
         this.ctx.clearRect(0, 0, rect.width, rect.height);
         
@@ -195,18 +233,15 @@ export class GameLoop {
             return;
         }
         
-        // Draw Grid
-        this.ctx.strokeStyle = '#334155';
-        this.ctx.lineWidth = 1;
-        for(let i=0; i<=loader.engine.board.width; i++) {
-            this.ctx.beginPath(); this.ctx.moveTo(i * this.tileSize, 0); this.ctx.lineTo(i * this.tileSize, rect.height); this.ctx.stroke();
-            this.ctx.beginPath(); this.ctx.moveTo(0, i * this.tileSize); this.ctx.lineTo(rect.width, i * this.tileSize); this.ctx.stroke();
+        // Draw Pre-rendered Offscreen Grid
+        if (this.gridDirty) {
+            this.renderOffscreenGrid(loader.engine.board.width, rect.width, rect.height);
         }
+        this.ctx.drawImage(this.offscreenCanvas, 0, 0, rect.width, rect.height);
         
         // Draw Arrows
         for (let i = this.arrows.length - 1; i >= 0; i--) {
             let a = this.arrows[i];
-            
             let drawX = a.x * this.tileSize;
             let drawY = a.y * this.tileSize;
             
@@ -216,11 +251,8 @@ export class GameLoop {
                     a.state = 'idle';
                 } else {
                     const offset = Math.sin(elapsed / 20) * 5;
-                    if (a.direction === 'LEFT' || a.direction === 'RIGHT') {
-                        drawX += offset;
-                    } else {
-                        drawY += offset;
-                    }
+                    if (a.direction === 'LEFT' || a.direction === 'RIGHT') drawX += offset;
+                    else drawY += offset;
                 }
             } else if (a.state === 'sliding') {
                 const speed = this.tileSize * 0.15;

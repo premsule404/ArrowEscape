@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import HTTPException, RequestValidationError
 from .api.v1 import health, auth, users, game, levels, progress, achievements, coins, themes, leaderboard, daily, shop, stats, notifications, admin, cloud, profile, settings, inventory, transactions, sync_queue
 
+from fastapi.middleware.gzip import GZipMiddleware
+
 app = FastAPI(title="Arrow Escape API", version="1.0.0")
 
 app.add_middleware(
@@ -13,6 +15,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 @app.exception_handler(HTTPException)
 async def custom_http_exception_handler(request: Request, exc: HTTPException):

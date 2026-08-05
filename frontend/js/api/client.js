@@ -1,6 +1,7 @@
 export class ApiClient {
     constructor(baseURL = window.location.origin.includes('localhost') ? "http://localhost:8000/api/v1" : "/api/v1") {
         this.baseURL = baseURL;
+        this.inFlightRequests = new Map();
     }
 
     getHeaders() {
@@ -11,28 +12,48 @@ export class ApiClient {
         };
     }
 
-    async request(endpoint, options = {}) {
-        const url = `${this.baseURL}${endpoint}`;
-        try {
-            const response = await fetch(url, {
-                ...options,
-                headers: {
-                    ...this.getHeaders(),
-                    ...options.headers
-                }
-            });
-            
-            if (!response.ok) {
-                const err = await response.json().catch(() => ({}));
-                const msg = err.error?.message || err.detail || `API Error: ${response.statusText}`;
-                throw new Error(msg);
-            }
-            
-            return response.json();
-        } catch (error) {
-            console.error(`[ApiClient] Failed to fetch ${endpoint}:`, error);
-            throw error;
+    async request(endpoint, options = {}, retries = 2) {
+        const cacheKey = `${options.method || 'GET'}:${endpoint}:${options.body || ''}`;
+        
+        // Deduplicate GET / read-only in-flight requests
+        if ((!options.method || options.method === 'GET') && this.inFlightRequests.has(cacheKey)) {
+            return this.inFlightRequests.get(cacheKey);
         }
+
+        const fetchPromise = (async () => {
+            let attempt = 0;
+            while (attempt <= retries) {
+                try {
+                    const url = `${this.baseURL}${endpoint}`;
+                    const response = await fetch(url, {
+                        ...options,
+                        headers: {
+                            ...this.getHeaders(),
+                            ...options.headers
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        const err = await response.json().catch(() => ({}));
+                        const msg = err.error?.message || err.detail || `API Error: ${response.statusText}`;
+                        throw new Error(msg);
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    attempt++;
+                    if (attempt > retries) throw error;
+                    await new Promise(r => setTimeout(r, attempt * 300)); // Exponential backoff
+                }
+            }
+        })();
+
+        if (!options.method || options.method === 'GET') {
+            this.inFlightRequests.set(cacheKey, fetchPromise);
+            fetchPromise.finally(() => this.inFlightRequests.delete(cacheKey));
+        }
+
+        return fetchPromise;
     }
 
     // --- Authentication ---
