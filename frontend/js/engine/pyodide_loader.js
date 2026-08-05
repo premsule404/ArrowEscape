@@ -4,20 +4,84 @@ export class PyodideLoader {
         this.engine = null;
     }
 
-    async init() {
-        this.pyodide = await loadPyodide();
+    topoSortModules(modules) {
+        const modMap = new Map();
+        modules.forEach(m => modMap.set(m.name, m));
         
-        await this.loadModule('shared/__init__.py', '');
-        await this.loadModule('shared/engine/__init__.py', '');
-        await this.loadModule('shared/engine/constants.py', await this.fetchText('assets/runtime/engine/constants.py'));
-        await this.loadModule('shared/engine/models.py', await this.fetchText('assets/runtime/engine/models.py'));
-        await this.loadModule('shared/engine/board.py', await this.fetchText('assets/runtime/engine/board.py'));
-        await this.loadModule('shared/engine/events.py', await this.fetchText('assets/runtime/engine/events.py'));
-        await this.loadModule('shared/engine/engine.py', await this.fetchText('assets/runtime/engine/engine.py'));
-        await this.loadModule('shared/engine/level_parser.py', await this.fetchText('assets/runtime/engine/level_parser.py'));
-        await this.loadModule('shared/engine/solver.py', await this.fetchText('assets/runtime/engine/solver.py'));
+        const visited = new Set();
+        const tempVisited = new Set();
+        const sorted = [];
+        
+        function visit(name) {
+            if (tempVisited.has(name)) {
+                throw new Error(`Circular dependency detected in module: ${name}`);
+            }
+            if (!visited.has(name)) {
+                tempVisited.add(name);
+                const mod = modMap.get(name);
+                if (!mod) {
+                    throw new Error(`Missing module declaration for: ${name}`);
+                }
+                for (const dep of (mod.dependencies || [])) {
+                    if (modMap.has(dep)) {
+                        visit(dep);
+                    } else {
+                        throw new Error(`Missing module dependency: '${dep}' required by '${name}'!`);
+                    }
+                }
+                tempVisited.delete(name);
+                visited.add(name);
+                sorted.push(mod);
+            }
+        }
+        
+        modules.forEach(m => {
+            if (!visited.has(m.name)) {
+                visit(m.name);
+            }
+        });
+        
+        return sorted;
+    }
 
-        await this.pyodide.runPythonAsync(`import sys; sys.path.append('/')`);
+    async init() {
+        try {
+            this.pyodide = await loadPyodide();
+            
+            await this.loadModule('shared/__init__.py', '');
+            await this.loadModule('shared/engine/__init__.py', '');
+            
+            // 1. Fetch modules.json automatically
+            const modulesRes = await fetch('assets/runtime/modules.json');
+            if (!modulesRes.ok) {
+                throw new Error(`Failed to fetch modules.json (Status: ${modulesRes.status})`);
+            }
+            const modulesData = await modulesRes.json();
+            const rawModules = modulesData.modules || [];
+            
+            // 2. Perform topological sort for dependency resolution
+            const orderedModules = this.topoSortModules(rawModules);
+            
+            // 3. Load modules in order into Pyodide virtual filesystem
+            for (const mod of orderedModules) {
+                try {
+                    const code = await this.fetchText(mod.path);
+                    await this.loadModule(`shared/engine/${mod.filename}`, code);
+                } catch (err) {
+                    const importers = rawModules
+                        .filter(m => (m.dependencies || []).includes(mod.name))
+                        .map(m => m.filename)
+                        .join(', ');
+                    const importedByMsg = importers ? ` (imported by: ${importers})` : '';
+                    throw new Error(`Missing module: ${mod.filename}${importedByMsg}. Details: ${err.message}`);
+                }
+            }
+
+            await this.pyodide.runPythonAsync(`import sys; sys.path.append('/')`);
+        } catch (error) {
+            console.error("[PyodideLoader] Initialization Error:", error);
+            throw error;
+        }
     }
 
     async fetchText(url) {
@@ -39,7 +103,6 @@ export class PyodideLoader {
     async loadLevel(levelNumOrId) {
         let jsonText = null;
         
-        // 1. Try REST API endpoint if numeric or valid ID
         try {
             const apiRes = await fetch(`/api/v1/levels/${levelNumOrId}`);
             if (apiRes.ok) {
@@ -50,7 +113,6 @@ export class PyodideLoader {
             console.log(`API fetch skipped for level ${levelNumOrId}, falling back to static runtime asset...`);
         }
 
-        // 2. Fallback to static runtime asset inside frontend/assets/runtime/levels/
         if (!jsonText) {
             let levelStr = typeof levelNumOrId === 'number' ? String(levelNumOrId).padStart(3, '0') : levelNumOrId;
             if (!levelStr.startsWith('level')) {

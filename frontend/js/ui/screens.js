@@ -89,19 +89,23 @@ export function setLevelTitle(title) {
 
 export function updateHUD(hearts, remainingSecs, remainingArrows, totalArrows, moves) {
     if (heartsContainer) {
-        const h = Math.max(0, Math.min(3, hearts));
+        const h = Math.max(0, Math.min(3, Number(hearts) || 0));
         heartsContainer.innerText = "❤️".repeat(h) + "🤍".repeat(3 - h);
     }
     if (timerDisplay) {
-        const secs = Math.ceil(Math.max(0, remainingSecs));
+        const secs = Math.ceil(Math.max(0, Number(remainingSecs) || 0));
         const mins = Math.floor(secs / 60);
         const remSecs = secs % 60;
         timerDisplay.innerText = `⏱ ${String(mins).padStart(2, '0')}:${String(remSecs).padStart(2, '0')}`;
     }
     if (progressDisplay) {
-        progressDisplay.innerText = `${totalArrows - remainingArrows}/${totalArrows}`;
+        const total = Math.max(0, Number(totalArrows) || 0);
+        const rem = Math.max(0, Number(remainingArrows) || 0);
+        const completed = Math.max(0, total - rem);
+        progressDisplay.innerText = `${completed}/${total}`;
     }
     if (moveCountDisplay) {
-        moveCountDisplay.innerText = `${moves}`;
+        const m = Math.max(0, Number(moves) || 0);
+        moveCountDisplay.innerText = `${m}`;
     }
 }

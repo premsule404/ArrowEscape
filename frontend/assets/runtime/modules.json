@@ -1,0 +1,59 @@
+{
+  "modules": [
+    {
+      "name": "board",
+      "filename": "board.py",
+      "path": "assets/runtime/engine/board.py",
+      "dependencies": [
+        "models"
+      ]
+    },
+    {
+      "name": "constants",
+      "filename": "constants.py",
+      "path": "assets/runtime/engine/constants.py",
+      "dependencies": []
+    },
+    {
+      "name": "engine",
+      "filename": "engine.py",
+      "path": "assets/runtime/engine/engine.py",
+      "dependencies": [
+        "board",
+        "constants",
+        "events",
+        "models"
+      ]
+    },
+    {
+      "name": "events",
+      "filename": "events.py",
+      "path": "assets/runtime/engine/events.py",
+      "dependencies": []
+    },
+    {
+      "name": "level_parser",
+      "filename": "level_parser.py",
+      "path": "assets/runtime/engine/level_parser.py",
+      "dependencies": [
+        "engine",
+        "models"
+      ]
+    },
+    {
+      "name": "models",
+      "filename": "models.py",
+      "path": "assets/runtime/engine/models.py",
+      "dependencies": []
+    },
+    {
+      "name": "solver",
+      "filename": "solver.py",
+      "path": "assets/runtime/engine/solver.py",
+      "dependencies": [
+        "board",
+        "engine"
+      ]
+    }
+  ]
+}

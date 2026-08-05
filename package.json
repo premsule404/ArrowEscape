@@ -4,6 +4,7 @@
   "description": "Arrow Escape Cross-Platform Public Online Game",
   "main": "electron-main.js",
   "scripts": {
+    "build": "python build.py",
     "start": "electron .",
     "build:electron": "electron-builder --win --mac --linux",
     "cap:add:android": "npx cap add android",
