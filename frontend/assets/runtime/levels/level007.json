@@ -1,0 +1,84 @@
+{
+  "id": "level007",
+  "name": "Level 7: Pinwheel",
+  "difficulty": 3,
+  "grid": {
+    "width": 6,
+    "height": 6
+  },
+  "arrows": [
+    {
+      "id": "a1",
+      "x": 2,
+      "y": 1,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a2",
+      "x": 3,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a3",
+      "x": 1,
+      "y": 2,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a4",
+      "x": 4,
+      "y": 2,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a5",
+      "x": 1,
+      "y": 3,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a6",
+      "x": 4,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a7",
+      "x": 2,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a8",
+      "x": 3,
+      "y": 4,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a9",
+      "x": 0,
+      "y": 0,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a10",
+      "x": 5,
+      "y": 5,
+      "direction": "LEFT",
+      "theme": "default"
+    }
+  ],
+  "rewards": {
+    "coins": 110
+  }
+}

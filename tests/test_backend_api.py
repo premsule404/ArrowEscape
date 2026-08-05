@@ -15,6 +15,13 @@ def test_health_check():
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
 
+def test_config_api():
+    response = client.get("/api/v1/config")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total_levels"] == 50
+    assert data["max_stars"] == 150
+
 def test_guest_login_and_sync():
     res = client.post("/api/v1/auth/guest", json={"display_name": "Test Player"})
     assert res.status_code == 200
@@ -82,3 +89,8 @@ def test_official_levels_api():
     assert len(levels) == 50
     assert levels[0]["level_num"] == 1
     assert levels[49]["level_num"] == 50
+    
+    single_res = client.get("/api/v1/levels/1")
+    assert single_res.status_code == 200
+    single_lvl = single_res.json()
+    assert single_lvl["id"] == "level001"

@@ -27,3 +27,13 @@ app.include_router(shop.router, prefix="/api/v1/shop", tags=["Shop"])
 app.include_router(stats.router, prefix="/api/v1/stats", tags=["Statistics"])
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
+
+@app.get("/api/v1/config")
+def get_config():
+    return {
+        "title": "Arrow Escape",
+        "total_levels": 50,
+        "max_stars": 150,
+        "star_thresholds": {"three_stars": 0.50, "two_stars": 0.70, "one_star": 0.80},
+        "coin_policy": {"three_stars": 1.0, "two_stars": 0.7, "one_star": 0.5, "zero_stars": 0.0}
+    }

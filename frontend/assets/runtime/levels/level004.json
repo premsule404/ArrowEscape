@@ -1,0 +1,70 @@
+{
+  "id": "level004",
+  "name": "Level 4: Traffic Jam",
+  "difficulty": 2,
+  "grid": {
+    "width": 5,
+    "height": 5
+  },
+  "arrows": [
+    {
+      "id": "a1",
+      "x": 1,
+      "y": 1,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a2",
+      "x": 1,
+      "y": 2,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a3",
+      "x": 2,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a4",
+      "x": 3,
+      "y": 1,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a5",
+      "x": 3,
+      "y": 2,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a6",
+      "x": 2,
+      "y": 3,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a7",
+      "x": 3,
+      "y": 3,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a8",
+      "x": 1,
+      "y": 3,
+      "direction": "DOWN",
+      "theme": "default"
+    }
+  ],
+  "rewards": {
+    "coins": 80
+  }
+}

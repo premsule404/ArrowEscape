@@ -1,0 +1,294 @@
+{
+  "id": "level020",
+  "name": "Level 20: Ultimate Arrow Escape",
+  "difficulty": 10,
+  "grid": {
+    "width": 10,
+    "height": 10
+  },
+  "arrows": [
+    {
+      "id": "a1",
+      "x": 1,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a2",
+      "x": 2,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a3",
+      "x": 3,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a4",
+      "x": 4,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a5",
+      "x": 5,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a6",
+      "x": 6,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a7",
+      "x": 7,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a8",
+      "x": 8,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a9",
+      "x": 1,
+      "y": 2,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a10",
+      "x": 8,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a11",
+      "x": 1,
+      "y": 3,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a12",
+      "x": 3,
+      "y": 3,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a13",
+      "x": 4,
+      "y": 3,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a14",
+      "x": 5,
+      "y": 3,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a15",
+      "x": 6,
+      "y": 3,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a16",
+      "x": 8,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a17",
+      "x": 1,
+      "y": 4,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a18",
+      "x": 3,
+      "y": 4,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a19",
+      "x": 4,
+      "y": 4,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a20",
+      "x": 5,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a21",
+      "x": 6,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a22",
+      "x": 8,
+      "y": 4,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a23",
+      "x": 1,
+      "y": 5,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a24",
+      "x": 3,
+      "y": 5,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a25",
+      "x": 4,
+      "y": 5,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a26",
+      "x": 5,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a27",
+      "x": 6,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a28",
+      "x": 8,
+      "y": 5,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a29",
+      "x": 1,
+      "y": 6,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a30",
+      "x": 8,
+      "y": 6,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a31",
+      "x": 1,
+      "y": 7,
+      "direction": "LEFT",
+      "theme": "default"
+    },
+    {
+      "id": "a32",
+      "x": 3,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a33",
+      "x": 4,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a34",
+      "x": 5,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a35",
+      "x": 6,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a36",
+      "x": 8,
+      "y": 7,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a37",
+      "x": 1,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a38",
+      "x": 2,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a39",
+      "x": 7,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a40",
+      "x": 8,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "default"
+    }
+  ],
+  "rewards": {
+    "coins": 250
+  }
+}

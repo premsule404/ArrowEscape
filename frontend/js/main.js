@@ -9,7 +9,7 @@ async function init() {
     try {
         await loader.init();
         
-        const meta = await loader.loadLevel(`../../levels/level001.json`);
+        const meta = await loader.loadLevel(1);
         setLevelTitle(meta.name);
         
         hideLoading();
@@ -75,10 +75,9 @@ document.getElementById('btn-undo').onclick = () => {
 document.getElementById('btn-next').onclick = async () => {
     hideVictory();
     currentLevelIndex++;
-    if (currentLevelIndex > 20) currentLevelIndex = 1;
+    if (currentLevelIndex > 50) currentLevelIndex = 1;
     
-    const levelStr = String(currentLevelIndex).padStart(3, '0');
-    const meta = await loader.loadLevel(`../../levels/level${levelStr}.json`);
+    const meta = await loader.loadLevel(currentLevelIndex);
     setLevelTitle(meta.name);
     
     gameLoop.start();
