@@ -31,13 +31,16 @@ class ProgressRepository:
     def update_level_progress(self, user_id: int, level_num: int, stars: int, moves: int, time_taken: float, coins_claimed: int, completed: bool = True) -> LevelProgress:
         lvl = self.get_level_progress(user_id, level_num)
         if not lvl:
-            lvl = LevelProgress(user_id=user_id, level_num=level_num, unlocked=True)
+            lvl = LevelProgress(user_id=user_id, level_num=level_num, unlocked=True, stars=0, best_moves=0, best_time=0.0, coins_claimed=0)
             self.db.add(lvl)
             
+        old_moves = lvl.best_moves or 0
+        old_time = lvl.best_time or 0.0
+        
         lvl.stars = max(lvl.stars or 0, stars)
         lvl.coins_claimed = max(lvl.coins_claimed or 0, coins_claimed)
-        lvl.best_moves = moves if (lvl.best_moves == 0 or moves < lvl.best_moves) else lvl.best_moves
-        lvl.best_time = time_taken if (lvl.best_time == 0.0 or time_taken < lvl.best_time) else lvl.best_time
+        lvl.best_moves = moves if (old_moves == 0 or moves < old_moves) else old_moves
+        lvl.best_time = time_taken if (old_time == 0.0 or time_taken < old_time) else old_time
         lvl.completed = lvl.completed or completed
         lvl.attempts = (lvl.attempts or 0) + 1
         
