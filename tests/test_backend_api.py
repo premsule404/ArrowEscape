@@ -158,7 +158,8 @@ def test_guest_account_upgrade_and_progress_merging():
     assert me_res.json()["is_guest"] is False
 
 def test_jwt_refresh_and_session_revocation():
-    guest_res = client.post("/api/v1/auth/guest")
+    guest_res = client.post("/api/v1/auth/guest", json={"display_name": "Session Player"})
+    assert guest_res.status_code == 200
     data = guest_res.json()
     ref_token = data["refresh_token"]
     acc_token = data["access_token"]
