@@ -124,3 +124,55 @@ def test_404_error_formatting():
     data = res.json()
     assert data["success"] is False
     assert data["error"]["code"] == "NOT_FOUND"
+
+def test_guest_account_upgrade_and_progress_merging():
+    # 1. Create Guest Account & play level 1 & 2
+    guest_res = client.post("/api/v1/auth/guest", json={"display_name": "Pro Guest"})
+    guest_data = guest_res.json()
+    token = guest_data["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    sync_res = client.post("/api/v1/cloud/sync", json={
+        "levels": [
+            {"level_id": 1, "stars": 3, "moves": 5, "time": 10.0, "base_coins": 100, "completed": True},
+            {"level_id": 2, "stars": 3, "moves": 7, "time": 14.0, "base_coins": 100, "completed": True}
+        ]
+    }, headers=headers)
+    assert sync_res.json()["total_coins"] == 200
+    
+    # 2. Upgrade Guest Account
+    uid = uuid.uuid4().hex[:6]
+    upg_res = client.post("/api/v1/auth/upgrade-guest", json={
+        "username": f"permanent_{uid}",
+        "password": "strongpassword123",
+        "email": f"perm_{uid}@example.com"
+    }, headers=headers)
+    assert upg_res.status_code == 200
+    upg_data = upg_res.json()
+    assert upg_data["is_guest"] is False
+    
+    # 3. Verify progress was preserved
+    new_token = upg_data["access_token"]
+    me_res = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {new_token}"})
+    assert me_res.status_code == 200
+    assert me_res.json()["is_guest"] is False
+
+def test_jwt_refresh_and_session_revocation():
+    guest_res = client.post("/api/v1/auth/guest")
+    data = guest_res.json()
+    ref_token = data["refresh_token"]
+    acc_token = data["access_token"]
+    headers = {"Authorization": f"Bearer {acc_token}"}
+    
+    # Refresh token
+    ref_res = client.post("/api/v1/auth/refresh", json={"refresh_token": ref_token})
+    assert ref_res.status_code == 200
+    assert "access_token" in ref_res.json()
+    
+    # Logout
+    log_res = client.post("/api/v1/auth/logout", json={"refresh_token": ref_token})
+    assert log_res.status_code == 200
+    
+    # Sessions
+    sess_res = client.get("/api/v1/auth/sessions", headers=headers)
+    assert sess_res.status_code == 200

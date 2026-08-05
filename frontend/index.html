@@ -26,6 +26,7 @@
                 <div class="left-controls">
                     <button id="btn-pause" class="icon-btn" aria-label="Pause Game" title="Pause Game (P)">⏸</button>
                     <button id="btn-level-select-nav" class="icon-btn" aria-label="Open Level Select" title="Select Level">🗺️</button>
+                    <button id="btn-open-login" class="icon-btn" aria-label="Account Login" title="Player Account">👤</button>
                 </div>
                 <h1 id="level-title" tabindex="0">Level 1</h1>
                 <div class="right-controls">
@@ -104,6 +105,59 @@
             </div>
             <div id="level-grid" class="level-grid" role="list">
                 <!-- Level cards rendered dynamically by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="overlay" role="dialog" aria-modal="true">
+        <div class="modal-content auth-modal-content">
+            <div class="levelselect-header">
+                <h2>Player Login</h2>
+                <button class="icon-btn close-btn auth-close-btn">✕</button>
+            </div>
+            <form id="form-login" class="auth-form">
+                <input type="text" id="login-username" class="auth-input" placeholder="Username" required />
+                <input type="password" id="login-password" class="auth-input" placeholder="Password" required />
+                <button type="submit" class="primary-btn success-btn">LOG IN</button>
+            </form>
+            <div class="auth-alt-actions">
+                <button id="btn-guest-login" class="primary-btn secondary-btn">🎮 Quick Guest Play</button>
+                <p>Need an account? <a href="#" id="btn-switch-register">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="overlay" role="dialog" aria-modal="true">
+        <div class="modal-content auth-modal-content">
+            <div class="levelselect-header">
+                <h2>Create Account</h2>
+                <button class="icon-btn close-btn auth-close-btn">✕</button>
+            </div>
+            <form id="form-register" class="auth-form">
+                <input type="text" id="reg-username" class="auth-input" placeholder="Username" required />
+                <input type="email" id="reg-email" class="auth-input" placeholder="Email (optional)" />
+                <input type="password" id="reg-password" class="auth-input" placeholder="Password" required />
+                <button type="submit" class="primary-btn success-btn">REGISTER</button>
+            </form>
+            <div class="auth-alt-actions">
+                <p>Already have an account? <a href="#" id="btn-switch-login">Log in here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="overlay" role="dialog" aria-modal="true">
+        <div class="modal-content auth-modal-content">
+            <div class="levelselect-header">
+                <h2>Player Profile</h2>
+                <button class="icon-btn close-btn auth-close-btn">✕</button>
+            </div>
+            <div class="profile-info-body">
+                <h3 id="prof-username" style="color: var(--primary-color);">Player</h3>
+                <p id="prof-type" style="margin: 10px 0; font-weight: 600;">Verified Account</p>
+                <button id="btn-logout" class="primary-btn danger-btn">LOG OUT</button>
             </div>
         </div>
     </div>

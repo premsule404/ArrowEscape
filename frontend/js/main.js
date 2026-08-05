@@ -2,10 +2,13 @@ import { loader } from './engine/pyodide_loader.js';
 import { GameLoop } from './core/game_loop.js';
 import { hideLoading, hideVictory, hidePauseModal, setLevelTitle, updateLoadingProgress } from './ui/screens.js';
 import { LevelSelectScreen } from './ui/level_select_screen.js';
+import { AuthScreens } from './ui/auth_screens.js';
+import { api } from './api/client.js';
 
 let currentLevelIndex = 1;
 let gameLoop = null;
 let levelSelectScreen = null;
+let authScreens = null;
 
 async function loadLevelByIndex(idx) {
     currentLevelIndex = idx;
@@ -18,6 +21,31 @@ async function loadLevelByIndex(idx) {
 
 async function init() {
     try {
+        authScreens = new AuthScreens((res) => {
+            console.log("Authenticated successfully:", res);
+        });
+        
+        const btnOpenLogin = document.getElementById('btn-open-login');
+        if (btnOpenLogin) {
+            btnOpenLogin.onclick = async () => {
+                try {
+                    const userData = await api.getMe();
+                    authScreens.showProfile(userData);
+                } catch (e) {
+                    authScreens.showLogin();
+                }
+            };
+        }
+        
+        const btnLogout = document.getElementById('btn-logout');
+        if (btnLogout) {
+            btnLogout.onclick = async () => {
+                await api.logout();
+                authScreens.hideAll();
+                alert("Logged out.");
+            };
+        }
+
         await loader.init((pct, task) => {
             updateLoadingProgress(pct, task);
         });

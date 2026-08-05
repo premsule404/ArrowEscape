@@ -24,7 +24,8 @@ export class ApiClient {
             
             if (!response.ok) {
                 const err = await response.json().catch(() => ({}));
-                throw new Error(err.detail || `API Error: ${response.statusText}`);
+                const msg = err.error?.message || err.detail || `API Error: ${response.statusText}`;
+                throw new Error(msg);
             }
             
             return response.json();
@@ -40,20 +41,16 @@ export class ApiClient {
             method: "POST",
             body: JSON.stringify({ username, password })
         });
-        if (res.access_token) {
-            localStorage.setItem("access_token", res.access_token);
-        }
+        this.saveTokens(res);
         return res;
     }
 
     async register(username, password, email = null) {
         const res = await this.request("/auth/register", {
             method: "POST",
-            body: JSON.stringify({ username, password, email, is_guest: false })
+            body: JSON.stringify({ username, password, email })
         });
-        if (res.access_token) {
-            localStorage.setItem("access_token", res.access_token);
-        }
+        this.saveTokens(res);
         return res;
     }
 
@@ -62,10 +59,22 @@ export class ApiClient {
             method: "POST",
             body: JSON.stringify({ display_name: displayName })
         });
-        if (res.access_token) {
-            localStorage.setItem("access_token", res.access_token);
-        }
+        this.saveTokens(res);
         return res;
+    }
+
+    async upgradeGuest(username, password, email = null) {
+        const res = await this.request("/auth/upgrade-guest", {
+            method: "POST",
+            body: JSON.stringify({ username, password, email })
+        });
+        this.saveTokens(res);
+        return res;
+    }
+
+    saveTokens(res) {
+        if (res.access_token) localStorage.setItem("access_token", res.access_token);
+        if (res.refresh_token) localStorage.setItem("refresh_token", res.refresh_token);
     }
 
     async getMe() {
@@ -73,12 +82,22 @@ export class ApiClient {
     }
     
     async logout() {
+        const refToken = localStorage.getItem("refresh_token");
+        if (refToken) {
+            try {
+                await this.request("/auth/logout", {
+                    method: "POST",
+                    body: JSON.stringify({ refresh_token: refToken })
+                });
+            } catch (e) {}
+        }
         localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
     }
 
     // --- Cloud Save & Sync ---
     async syncProgress(levels = [], currentLevel = null) {
-        return this.request("/progress/sync", {
+        return this.request("/cloud/sync", {
             method: "POST",
             body: JSON.stringify({ levels, current_level: currentLevel })
         });
@@ -94,8 +113,8 @@ export class ApiClient {
     }
 
     async updateSettings(settingsData) {
-        return this.request("/users/settings", {
-            method: "PUT",
+        return this.request("/settings", {
+            method: "PATCH",
             body: JSON.stringify(settingsData)
         });
     }
