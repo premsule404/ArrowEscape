@@ -26,16 +26,23 @@ def step_ast_and_manifests():
 def step_validate_pwa():
     root = os.path.dirname(os.path.abspath(__file__))
     manifest_p = os.path.join(root, "frontend", "manifest.json")
-    sw_p = os.path.join(root, "frontend", "sw.js")
+    sw_p = os.path.join(root, "frontend", "service-worker.js")
+    offline_p = os.path.join(root, "frontend", "offline.html")
+    icon512_p = os.path.join(root, "frontend", "assets", "runtime", "icon-512.png")
     
     if not os.path.exists(manifest_p):
         raise FileNotFoundError("frontend/manifest.json is missing.")
     if not os.path.exists(sw_p):
-        raise FileNotFoundError("frontend/sw.js is missing.")
+        raise FileNotFoundError("frontend/service-worker.js is missing.")
+    if not os.path.exists(offline_p):
+        raise FileNotFoundError("frontend/offline.html is missing.")
+    if not os.path.exists(icon512_p):
+        raise FileNotFoundError("frontend/assets/runtime/icon-512.png is missing.")
         
     with open(manifest_p, "r", encoding="utf-8") as f:
         data = json.load(f)
         assert data.get("name") == "Arrow Escape", "Invalid manifest.json name"
+        assert len(data.get("shortcuts", [])) >= 4, "Missing PWA shortcuts"
 
 def step_validate_electron():
     root = os.path.dirname(os.path.abspath(__file__))
