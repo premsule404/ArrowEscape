@@ -42,3 +42,26 @@ def test_undo():
     engine.undo()
     assert engine.is_level_complete() is False
     assert len(engine.board.arrows) == 1
+
+def test_progress_counts():
+    engine = GameEngine()
+    assert engine.total_arrows_count == 0
+    assert engine.remaining_arrows_count == 0
+    assert engine.completed_arrows_count == 0
+    
+    arrow1 = Arrow("1", Position(0, 0), Direction.RIGHT)
+    arrow2 = Arrow("2", Position(2, 2), Direction.UP)
+    engine.load_level(3, 3, [arrow1, arrow2])
+    
+    assert engine.total_arrows_count == 2
+    assert engine.remaining_arrows_count == 2
+    assert engine.completed_arrows_count == 0
+    
+    engine.tap_arrow("1")
+    assert engine.remaining_arrows_count == 1
+    assert engine.completed_arrows_count == 1
+    
+    engine.restart()
+    assert engine.total_arrows_count == 2
+    assert engine.remaining_arrows_count == 2
+    assert engine.completed_arrows_count == 0

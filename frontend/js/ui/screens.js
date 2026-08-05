@@ -99,10 +99,17 @@ export function updateHUD(hearts, remainingSecs, remainingArrows, totalArrows, m
         timerDisplay.innerText = `⏱ ${String(mins).padStart(2, '0')}:${String(remSecs).padStart(2, '0')}`;
     }
     if (progressDisplay) {
-        const total = Math.max(0, Number(totalArrows) || 0);
-        const rem = Math.max(0, Number(remainingArrows) || 0);
-        const completed = Math.max(0, total - rem);
-        progressDisplay.innerText = `${completed}/${total}`;
+        const rawTotal = Number(totalArrows);
+        const rawRem = Number(remainingArrows);
+        
+        if (isNaN(rawTotal) || rawTotal <= 0) {
+            progressDisplay.innerText = "0/0";
+        } else {
+            const total = Math.max(0, Math.floor(rawTotal));
+            const rem = isNaN(rawRem) ? total : Math.max(0, Math.min(total, Math.floor(rawRem)));
+            const completed = Math.max(0, Math.min(total, total - rem));
+            progressDisplay.innerText = `${completed}/${total}`;
+        }
     }
     if (moveCountDisplay) {
         const m = Math.max(0, Number(moves) || 0);

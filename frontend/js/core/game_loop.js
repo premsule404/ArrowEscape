@@ -60,7 +60,12 @@ export class GameLoop {
 
     syncHUD() {
         if (!loader.engine) return;
-        const remaining = loader.engine.board ? loader.engine.board.arrows.size : 0;
+        let remaining = 0;
+        if (typeof loader.engine.remaining_arrows_count === 'number') {
+            remaining = loader.engine.remaining_arrows_count;
+        } else if (loader.engine.board && loader.engine.board.arrows) {
+            remaining = loader.engine.board.arrows.size || 0;
+        }
         updateHUD(
             loader.engine.hearts,
             loader.engine.time_remaining,

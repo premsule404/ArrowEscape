@@ -34,6 +34,14 @@ class GameEngine:
     def is_paused(self) -> bool:
         return self.state == GameState.PAUSED
 
+    @property
+    def remaining_arrows_count(self) -> int:
+        return len(self.board.arrows) if self.board else 0
+
+    @property
+    def completed_arrows_count(self) -> int:
+        return max(0, self.total_arrows_count - self.remaining_arrows_count)
+
     def load_level(self, width: int, height: int, arrows: List[Arrow], time_limit: Optional[float] = None, base_coins: int = 100):
         self.board = Board(width, height)
         for arrow in arrows:
