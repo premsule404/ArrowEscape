@@ -261,6 +261,32 @@ canvas#game-canvas {
     margin-bottom: 16px; 
 }
 
+.loading-bar-container {
+    width: min(85vw, 320px);
+    height: 10px;
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 14px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.loading-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 10px;
+    transition: width 0.25s ease-out;
+}
+
+.loading-percentage-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+}
+
 @keyframes spin { 
     0% { transform: rotate(0deg); } 
     100% { transform: rotate(360deg); } 

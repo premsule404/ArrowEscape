@@ -1,0 +1,39 @@
+{
+  "status": "SUCCESS",
+  "build_time_seconds": 0.6406,
+  "total_modules": 7,
+  "total_levels": 50,
+  "load_order": [
+    "models",
+    "board",
+    "constants",
+    "events",
+    "engine",
+    "level_parser",
+    "solver"
+  ],
+  "dependency_graph": {
+    "board": [
+      "models"
+    ],
+    "constants": [],
+    "engine": [
+      "board",
+      "constants",
+      "events",
+      "models"
+    ],
+    "events": [],
+    "level_parser": [
+      "engine",
+      "models"
+    ],
+    "models": [],
+    "solver": [
+      "board",
+      "engine"
+    ]
+  },
+  "warnings": [],
+  "errors": []
+}

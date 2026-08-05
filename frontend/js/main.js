@@ -1,6 +1,6 @@
 import { loader } from './engine/pyodide_loader.js';
 import { GameLoop } from './core/game_loop.js';
-import { hideLoading, hideVictory, hidePauseModal, setLevelTitle } from './ui/screens.js';
+import { hideLoading, hideVictory, hidePauseModal, setLevelTitle, updateLoadingProgress } from './ui/screens.js';
 import { LevelSelectScreen } from './ui/level_select_screen.js';
 
 let currentLevelIndex = 1;
@@ -18,14 +18,19 @@ async function loadLevelByIndex(idx) {
 
 async function init() {
     try {
-        await loader.init();
+        await loader.init((pct, task) => {
+            updateLoadingProgress(pct, task);
+        });
         
         levelSelectScreen = new LevelSelectScreen((selectedLvl) => {
             loadLevelByIndex(selectedLvl);
         });
         
+        updateLoadingProgress(90, "Loading Level 1 Layout...");
         await loadLevelByIndex(1);
-        hideLoading();
+        
+        updateLoadingProgress(100, "Starting Game...");
+        setTimeout(() => hideLoading(), 250);
         
         gameLoop = new GameLoop('game-canvas');
         gameLoop.start();
@@ -33,7 +38,7 @@ async function init() {
     } catch (e) {
         console.error("Initialization Failed:", e);
         document.querySelector('.loader').style.display = 'none';
-        document.querySelector('#loading p').innerText = "Failed to load Engine. See console.";
+        document.querySelector('#loading p').innerText = `Initialization Failed: ${e.message}`;
     }
 }
 

@@ -83,6 +83,17 @@ export function hideLoading() {
     if (uiLoading) uiLoading.classList.remove('active');
 }
 
+export function updateLoadingProgress(percent, taskMessage) {
+    const bar = document.getElementById('loading-progress-bar');
+    const pct = document.getElementById('loading-percentage');
+    const txt = document.getElementById('loading-text');
+    
+    const p = Math.max(0, Math.min(100, Math.round(Number(percent) || 0)));
+    if (bar) bar.style.width = `${p}%`;
+    if (pct) pct.innerText = `${p}%`;
+    if (txt && taskMessage) txt.innerText = taskMessage;
+}
+
 export function setLevelTitle(title) {
     if (levelTitle) levelTitle.innerText = title;
 }

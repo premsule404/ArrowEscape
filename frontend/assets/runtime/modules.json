@@ -1,7 +1,13 @@
 {
   "modules": [
     {
-      "name": "board",
+      "id": "models",
+      "filename": "models.py",
+      "path": "assets/runtime/engine/models.py",
+      "dependencies": []
+    },
+    {
+      "id": "board",
       "filename": "board.py",
       "path": "assets/runtime/engine/board.py",
       "dependencies": [
@@ -9,13 +15,19 @@
       ]
     },
     {
-      "name": "constants",
+      "id": "constants",
       "filename": "constants.py",
       "path": "assets/runtime/engine/constants.py",
       "dependencies": []
     },
     {
-      "name": "engine",
+      "id": "events",
+      "filename": "events.py",
+      "path": "assets/runtime/engine/events.py",
+      "dependencies": []
+    },
+    {
+      "id": "engine",
       "filename": "engine.py",
       "path": "assets/runtime/engine/engine.py",
       "dependencies": [
@@ -26,13 +38,7 @@
       ]
     },
     {
-      "name": "events",
-      "filename": "events.py",
-      "path": "assets/runtime/engine/events.py",
-      "dependencies": []
-    },
-    {
-      "name": "level_parser",
+      "id": "level_parser",
       "filename": "level_parser.py",
       "path": "assets/runtime/engine/level_parser.py",
       "dependencies": [
@@ -41,13 +47,7 @@
       ]
     },
     {
-      "name": "models",
-      "filename": "models.py",
-      "path": "assets/runtime/engine/models.py",
-      "dependencies": []
-    },
-    {
-      "name": "solver",
+      "id": "solver",
       "filename": "solver.py",
       "path": "assets/runtime/engine/solver.py",
       "dependencies": [

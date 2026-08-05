@@ -12,7 +12,11 @@
 <body>
     <div id="loading" class="overlay active" role="status" aria-label="Loading Game">
         <div class="loader"></div>
-        <p id="loading-text">Loading Game Engine...</p>
+        <p id="loading-text">Initializing Pyodide WASM...</p>
+        <div class="loading-bar-container">
+            <div id="loading-progress-bar" class="loading-bar-fill" style="width: 10%;"></div>
+        </div>
+        <span id="loading-percentage" class="loading-percentage-text">10%</span>
     </div>
 
     <div class="game-container">
