@@ -13,8 +13,14 @@ export class GameLoop {
         this.hasClaimedReward = false;
         
         window.addEventListener('resize', () => this.resizeCanvas());
+        window.addEventListener('orientationchange', () => setTimeout(() => this.resizeCanvas(), 100));
         window.addEventListener('blur', () => this.handleWindowBlur());
         this.canvas.addEventListener('pointerdown', (e) => this.handleInput(e));
+        
+        if (window.ResizeObserver && this.canvas.parentElement) {
+            this.resizeObserver = new ResizeObserver(() => this.resizeCanvas());
+            this.resizeObserver.observe(this.canvas.parentElement);
+        }
         
         this.setupEngineEvents();
     }
@@ -123,16 +129,24 @@ export class GameLoop {
     }
 
     resizeCanvas() {
+        if (!this.canvas || !this.canvas.parentElement) return;
         const rect = this.canvas.parentElement.getBoundingClientRect();
-        const size = Math.min(rect.width, rect.height, 500);
-        this.canvas.width = size * window.devicePixelRatio;
-        this.canvas.height = size * window.devicePixelRatio;
+        const size = Math.max(250, Math.min(rect.width, rect.height));
+        const dpr = window.devicePixelRatio || 1;
+        
+        this.canvas.width = Math.floor(size * dpr);
+        this.canvas.height = Math.floor(size * dpr);
         this.canvas.style.width = size + 'px';
         this.canvas.style.height = size + 'px';
         
-        this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        if (this.ctx.resetTransform) {
+            this.ctx.resetTransform();
+        } else {
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+        this.ctx.scale(dpr, dpr);
         
-        if (loader.engine) {
+        if (loader.engine && loader.engine.board) {
             this.tileSize = size / loader.engine.board.width;
         }
     }

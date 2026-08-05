@@ -1,17 +1,30 @@
 import { loader } from './engine/pyodide_loader.js';
 import { GameLoop } from './core/game_loop.js';
 import { hideLoading, hideVictory, hidePauseModal, setLevelTitle } from './ui/screens.js';
+import { LevelSelectScreen } from './ui/level_select_screen.js';
 
 let currentLevelIndex = 1;
 let gameLoop = null;
+let levelSelectScreen = null;
+
+async function loadLevelByIndex(idx) {
+    currentLevelIndex = idx;
+    const meta = await loader.loadLevel(currentLevelIndex);
+    setLevelTitle(meta.name);
+    if (gameLoop) {
+        gameLoop.start();
+    }
+}
 
 async function init() {
     try {
         await loader.init();
         
-        const meta = await loader.loadLevel(1);
-        setLevelTitle(meta.name);
+        levelSelectScreen = new LevelSelectScreen((selectedLvl) => {
+            loadLevelByIndex(selectedLvl);
+        });
         
+        await loadLevelByIndex(1);
         hideLoading();
         
         gameLoop = new GameLoop('game-canvas');
@@ -30,6 +43,16 @@ if (btnPause) {
     btnPause.onclick = () => {
         if (loader.engine) {
             loader.engine.pause();
+        }
+    };
+}
+
+// Open Level Select Nav
+const btnLevelNav = document.getElementById('btn-level-select-nav');
+if (btnLevelNav) {
+    btnLevelNav.onclick = () => {
+        if (levelSelectScreen) {
+            levelSelectScreen.show(50, 50);
         }
     };
 }
@@ -59,29 +82,33 @@ const btnExitModal = document.getElementById('btn-exit-modal');
 if (btnExitModal) {
     btnExitModal.onclick = () => {
         hidePauseModal();
-        alert("Returning to Level Select...");
+        if (levelSelectScreen) {
+            levelSelectScreen.show(50, 50);
+        }
     };
 }
 
 // Undo Button
-document.getElementById('btn-undo').onclick = () => {
-    if (loader.engine && loader.engine.undo()) {
-        gameLoop.syncArrowsFromEngine();
-        gameLoop.syncHUD();
-    }
-};
+const btnUndo = document.getElementById('btn-undo');
+if (btnUndo) {
+    btnUndo.onclick = () => {
+        if (loader.engine && loader.engine.undo()) {
+            gameLoop.syncArrowsFromEngine();
+            gameLoop.syncHUD();
+        }
+    };
+}
 
 // Continue Button (Next Level)
-document.getElementById('btn-next').onclick = async () => {
-    hideVictory();
-    currentLevelIndex++;
-    if (currentLevelIndex > 50) currentLevelIndex = 1;
-    
-    const meta = await loader.loadLevel(currentLevelIndex);
-    setLevelTitle(meta.name);
-    
-    gameLoop.start();
-};
+const btnNext = document.getElementById('btn-next');
+if (btnNext) {
+    btnNext.onclick = async () => {
+        hideVictory();
+        currentLevelIndex++;
+        if (currentLevelIndex > 50) currentLevelIndex = 1;
+        await loadLevelByIndex(currentLevelIndex);
+    };
+}
 
 // Replay Level Button in Celebration Modal
 const btnReplayCelebration = document.getElementById('btn-replay-celebration');
@@ -99,7 +126,9 @@ const btnSelectCelebration = document.getElementById('btn-select-celebration');
 if (btnSelectCelebration) {
     btnSelectCelebration.onclick = () => {
         hideVictory();
-        alert("Opening Level Select...");
+        if (levelSelectScreen) {
+            levelSelectScreen.show(50, 50);
+        }
     };
 }
 
@@ -111,6 +140,28 @@ if (btnRestartModal) {
         }
     };
 }
+
+// Keyboard Accessibility & Hotkeys
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') {
+        if (loader.engine) {
+            if (loader.engine.is_paused) {
+                loader.engine.resume();
+            } else {
+                loader.engine.pause();
+            }
+        }
+    } else if (e.key === 'u' || e.key === 'U') {
+        if (loader.engine && loader.engine.undo()) {
+            gameLoop.syncArrowsFromEngine();
+            gameLoop.syncHUD();
+        }
+    } else if (e.key === 'r' || e.key === 'R') {
+        if (gameLoop) {
+            gameLoop.restartLevel();
+        }
+    }
+});
 
 // Bootstrap the app
 init();

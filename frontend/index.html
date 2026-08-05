@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <title>Arrow Escape</title>
     <link rel="stylesheet" href="css/styles.css">
     <!-- Load Pyodide for executing Python in browser -->
@@ -10,51 +10,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="loading" class="overlay active">
+    <div id="loading" class="overlay active" role="status" aria-label="Loading Game">
         <div class="loader"></div>
-        <p>Loading Game Engine...</p>
+        <p id="loading-text">Loading Game Engine...</p>
     </div>
 
     <div class="game-container">
-        <header class="top-bar">
-            <button id="btn-pause" class="icon-btn">⏸</button>
-            <h1 id="level-title">Level 1</h1>
-            <div class="progress-badge">Progress: <span id="progress-display">0/0</span></div>
-            <div id="hearts-container" class="hearts-display">❤️ ❤️ ❤️</div>
-            <div id="timer-display" class="timer-display">⏱ 00:00</div>
-            <div class="moves-badge">Moves: <span id="move-count">0</span></div>
-            <div class="right-controls">
-                <button id="btn-undo" class="icon-btn">↺</button>
-                <button id="btn-hint" class="icon-btn">💡</button>
+        <!-- Responsive 2-Tier Top Header -->
+        <header class="top-bar" aria-label="Game Control Header">
+            <div class="header-row primary-controls">
+                <div class="left-controls">
+                    <button id="btn-pause" class="icon-btn" aria-label="Pause Game" title="Pause Game (P)">⏸</button>
+                    <button id="btn-level-select-nav" class="icon-btn" aria-label="Open Level Select" title="Select Level">🗺️</button>
+                </div>
+                <h1 id="level-title" tabindex="0">Level 1</h1>
+                <div class="right-controls">
+                    <button id="btn-undo" class="icon-btn" aria-label="Undo Move" title="Undo Move (U)">↺</button>
+                    <button id="btn-hint" class="icon-btn" aria-label="Get Hint" title="Get Hint (H)">💡</button>
+                </div>
+            </div>
+
+            <!-- Stats Bar Strip -->
+            <div class="header-row stats-strip" aria-label="Game Progress & Stats">
+                <div id="hearts-container" class="hearts-display" title="Lives Remaining">❤️ ❤️ ❤️</div>
+                <div id="timer-display" class="timer-display" title="Time Remaining">⏱ 00:00</div>
+                <div class="hud-badge progress-badge" title="Cleared / Total Arrows">Progress: <span id="progress-display">0/0</span></div>
+                <div class="hud-badge moves-badge" title="Total Moves">Moves: <span id="move-count">0</span></div>
             </div>
         </header>
 
-        <main class="canvas-container">
-            <canvas id="game-canvas"></canvas>
+        <!-- Centered Responsive Game Canvas Container -->
+        <main class="canvas-container" aria-label="Game Board Canvas">
+            <canvas id="game-canvas" tabindex="0" aria-label="Interactive Arrow Escape Board"></canvas>
         </main>
     </div>
 
     <!-- Pause Modal -->
-    <div id="pause-modal" class="overlay">
+    <div id="pause-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pause-title">
         <div class="modal-content pause-content">
-            <h2>PAUSED</h2>
+            <h2 id="pause-title">PAUSED</h2>
             <div class="pause-actions">
                 <button id="btn-resume-modal" class="primary-btn success-btn">▶ RESUME</button>
                 <button id="btn-restart-pause" class="primary-btn warning-btn">↻ RESTART</button>
-                <button id="btn-exit-modal" class="primary-btn danger-btn">🏠 EXIT LEVEL</button>
+                <button id="btn-exit-modal" class="primary-btn danger-btn">🏠 LEVEL SELECT</button>
             </div>
         </div>
     </div>
 
     <!-- Victory Celebration Modal -->
-    <div id="victory-modal" class="overlay">
+    <div id="victory-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="victory-level-name">
         <canvas id="confetti-canvas" class="confetti-layer"></canvas>
         <div class="radial-burst"></div>
         <div class="modal-content celebration-content">
             <h3 id="victory-level-name">Level 1</h3>
             <h2 class="celebration-title">LEVEL COMPLETED! 🎉</h2>
             
-            <div id="victory-stars" class="stars-container">
+            <div id="victory-stars" class="stars-container" aria-label="Earned Stars">
                 <span class="star-slot">★</span>
                 <span class="star-slot">★</span>
                 <span class="star-slot">★</span>
@@ -72,11 +83,24 @@
     </div>
 
     <!-- Game Over Modal -->
-    <div id="gameover-modal" class="overlay">
+    <div id="gameover-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="gameover-title">
         <div class="modal-content">
             <h2 id="gameover-title" style="color: var(--error-color);">Game Over!</h2>
             <p id="gameover-msg" style="margin-bottom: 20px;">No hearts left!</p>
-            <button id="btn-restart-modal" class="primary-btn" style="background: var(--error-color);">Restart Level</button>
+            <button id="btn-restart-modal" class="primary-btn danger-btn">↻ Restart Level</button>
+        </div>
+    </div>
+
+    <!-- Level Select Modal -->
+    <div id="levelselect-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="levelselect-title">
+        <div class="modal-content levelselect-content">
+            <div class="levelselect-header">
+                <h2 id="levelselect-title">Select Level</h2>
+                <button id="btn-close-levelselect" class="icon-btn close-btn" aria-label="Close Level Select">✕</button>
+            </div>
+            <div id="level-grid" class="level-grid" role="list">
+                <!-- Level cards rendered dynamically by JS -->
+            </div>
         </div>
     </div>
 
