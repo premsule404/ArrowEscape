@@ -9,6 +9,7 @@ export class PyodideLoader {
         
         await this.loadModule('shared/__init__.py', '');
         await this.loadModule('shared/engine/__init__.py', '');
+        await this.loadModule('shared/engine/constants.py', await this.fetchText('assets/runtime/engine/constants.py'));
         await this.loadModule('shared/engine/models.py', await this.fetchText('assets/runtime/engine/models.py'));
         await this.loadModule('shared/engine/board.py', await this.fetchText('assets/runtime/engine/board.py'));
         await this.loadModule('shared/engine/events.py', await this.fetchText('assets/runtime/engine/events.py'));
@@ -21,7 +22,7 @@ export class PyodideLoader {
 
     async fetchText(url) {
         const res = await fetch(url);
-        if (!res.ok) throw new Error(`Failed to fetch ${url}`);
+        if (!res.ok) throw new Error(`Failed to fetch ${url} (status: ${res.status})`);
         return await res.text();
     }
 
