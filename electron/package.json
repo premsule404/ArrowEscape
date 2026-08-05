@@ -1,0 +1,40 @@
+{
+  "name": "arrow-escape-desktop",
+  "version": "1.0.0",
+  "description": "Arrow Escape Commercial Desktop Release",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux",
+    "build:mac": "electron-builder --mac"
+  },
+  "keywords": [
+    "game",
+    "puzzle",
+    "arrow-escape"
+  ],
+  "author": "Arrow Escape Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.arrowescape.game",
+    "productName": "Arrow Escape",
+    "files": [
+      "main.js",
+      "../frontend/**/*",
+      "../shared/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  }
+}

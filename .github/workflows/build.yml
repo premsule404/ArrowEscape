@@ -1,0 +1,41 @@
+name: Arrow Escape Multi-Platform CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-package:
+    name: Test & Build Release Packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest pytest-cov httpx
+
+      - name: Run Pytest Test Suite
+        run: |
+          pytest
+
+      - name: Run Cross-Platform Packaging Script
+        run: |
+          python package_all.py
+
+      - name: Upload Web PWA & Runtime Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: arrow-escape-web-pwa
+          path: frontend/
