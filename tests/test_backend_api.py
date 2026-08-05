@@ -177,3 +177,40 @@ def test_jwt_refresh_and_session_revocation():
     # Sessions
     sess_res = client.get("/api/v1/auth/sessions", headers=headers)
     assert sess_res.status_code == 200
+
+def test_inventory_transactions_sync_status_and_admin():
+    # Admin User
+    admin_login = client.post("/api/v1/auth/login", json={"username": "admin", "password": "admin123"})
+    assert admin_login.status_code == 200
+    admin_token = admin_login.json()["access_token"]
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Regular User
+    reg_user = client.post("/api/v1/auth/guest", json={"display_name": "Economy Player"})
+    user_token = reg_user.json()["access_token"]
+    user_id = reg_user.json()["user_id"]
+    user_headers = {"Authorization": f"Bearer {user_token}"}
+    
+    # 1. Admin Grants Coins
+    grant_res = client.post(f"/api/v1/admin/users/{user_id}/grant-coins", json={"amount": 500}, headers=admin_headers)
+    assert grant_res.status_code == 200
+    assert grant_res.json()["new_balance"] == 500
+    
+    # 2. Check Inventory
+    inv_res = client.get("/api/v1/inventory", headers=user_headers)
+    assert inv_res.status_code == 200
+    inv_items = inv_res.json()
+    coin_item = next((i for i in inv_items if i["item_type"] == "coins"), None)
+    assert coin_item["quantity"] == 500
+    
+    # 3. Check Transactions History
+    tx_res = client.get("/api/v1/transactions", headers=user_headers)
+    assert tx_res.status_code == 200
+    tx_list = tx_res.json()
+    assert len(tx_list) >= 1
+    assert tx_list[0]["amount"] == 500
+    
+    # 4. Check Sync Status
+    sync_status = client.get("/api/v1/sync/status", headers=user_headers)
+    assert sync_status.status_code == 200
+    assert sync_status.json()["sync_status"] == "UP_TO_DATE"

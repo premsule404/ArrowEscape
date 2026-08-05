@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import HTTPException, RequestValidationError
-from .api.v1 import health, auth, users, game, levels, progress, achievements, coins, themes, leaderboard, daily, shop, stats, notifications, admin, cloud, profile, settings
+from .api.v1 import health, auth, users, game, levels, progress, achievements, coins, themes, leaderboard, daily, shop, stats, notifications, admin, cloud, profile, settings, inventory, transactions, sync_queue
 
 app = FastAPI(title="Arrow Escape API", version="1.0.0")
 
@@ -55,6 +55,9 @@ app.include_router(profile.router, prefix="/api/v1/profile", tags=["Profile"])
 app.include_router(stats.router, prefix="/api/v1/stats", tags=["Stats"])
 app.include_router(settings.router, prefix="/api/v1/settings", tags=["Settings"])
 app.include_router(cloud.router, prefix="/api/v1/cloud", tags=["Cloud Sync"])
+app.include_router(inventory.router, prefix="/api/v1/inventory", tags=["Inventory"])
+app.include_router(transactions.router, prefix="/api/v1/transactions", tags=["Transactions"])
+app.include_router(sync_queue.router, prefix="/api/v1/sync", tags=["Sync Status"])
 app.include_router(achievements.router, prefix="/api/v1/achievements", tags=["Achievements"])
 app.include_router(coins.router, prefix="/api/v1/coins", tags=["Coins"])
 app.include_router(themes.router, prefix="/api/v1/themes", tags=["Themes"])

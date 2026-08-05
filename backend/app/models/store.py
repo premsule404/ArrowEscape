@@ -1,56 +1,28 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Float
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float
+from datetime import datetime
 from ..db.base_class import Base
 
-class Coins(Base):
-    __tablename__ = "coins_ledger"
-    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-    current_coins = Column(Integer, default=0)
-    lifetime_coins = Column(Integer, default=0)
-    spent_coins = Column(Integer, default=0)
-    earned_from_levels = Column(Integer, default=0)
-    earned_from_rewards = Column(Integer, default=0)
+class Inventory(Base):
+    __tablename__ = "inventories"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    item_type = Column(String, index=True) # e.g. 'coins', 'hints', 'theme_dark'
+    quantity = Column(Integer, default=0)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-class Achievement(Base):
-    __tablename__ = "achievements"
-    id = Column(String, primary_key=True)
-    name = Column(String)
-    description = Column(String)
-    reward_coins = Column(Integer)
+class CoinTransaction(Base):
+    __tablename__ = "coin_transactions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    amount = Column(Integer, nullable=False) # Positive for reward, negative for spend
+    source = Column(String, nullable=False) # e.g. 'level_reward', 'admin_grant', 'hint_purchase'
+    balance_after = Column(Integer, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
-class UserAchievement(Base):
-    __tablename__ = "user_achievements"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    achievement_id = Column(String, ForeignKey("achievements.id"))
-    unlocked = Column(Boolean, default=False)
-    unlocked_date = Column(DateTime)
-
-class Theme(Base):
-    __tablename__ = "themes"
-    id = Column(String, primary_key=True)
-    name = Column(String)
-    cost = Column(Integer)
-    is_premium = Column(Boolean, default=False)
-
-class UserTheme(Base):
-    __tablename__ = "user_themes"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    theme_id = Column(String, ForeignKey("themes.id"))
-    unlocked = Column(Boolean, default=False)
-    equipped = Column(Boolean, default=False)
-
-class Purchase(Base):
-    __tablename__ = "purchases"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    item_id = Column(String)
-    item_type = Column(String)
-
-class Transaction(Base):
-    __tablename__ = "transactions"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    amount_usd = Column(Float)
-    coins_purchased = Column(Integer)
-    transaction_id = Column(String, unique=True)
+class HintTransaction(Base):
+    __tablename__ = "hint_transactions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    level_num = Column(Integer, nullable=False)
+    cost = Column(Integer, default=50)
+    created_at = Column(DateTime, default=datetime.utcnow)
