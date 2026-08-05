@@ -1,0 +1,25 @@
+{
+  "name": "arrow-escape",
+  "version": "1.0.0",
+  "description": "Arrow Escape Cross-Platform Public Online Game",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:electron": "electron-builder --win --mac --linux",
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android"
+  },
+  "keywords": ["game", "puzzle", "cross-platform", "arrow-escape"],
+  "author": "Arrow Escape Team",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0",
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.0"
+  }
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arrow Escape</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Load Pyodide for executing Python in browser -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="loading" class="overlay active">
+        <div class="loader"></div>
+        <p>Loading Game Engine...</p>
+    </div>
+
+    <div class="game-container">
+        <header class="top-bar">
+            <button id="btn-pause" class="icon-btn">⏸</button>
+            <h1 id="level-title">Level 1</h1>
+            <div class="progress-badge">Progress: <span id="progress-display">0/0</span></div>
+            <div id="hearts-container" class="hearts-display">[color=ff3344]♥ ♥ ♥[/color]</div>
+            <div id="timer-display" class="timer-display">⏱ 00:00</div>
+            <div class="moves-badge">Moves: <span id="move-count">0</span></div>
+            <div class="right-controls">
+                <button id="btn-undo" class="icon-btn">↺</button>
+                <button id="btn-hint" class="icon-btn">💡</button>
+            </div>
+        </header>
+
+        <main class="canvas-container">
+            <canvas id="game-canvas"></canvas>
+        </main>
+    </div>
+
+    <!-- Pause Modal -->
+    <div id="pause-modal" class="overlay">
+        <div class="modal-content pause-content">
+            <h2>PAUSED</h2>
+            <div class="pause-actions">
+                <button id="btn-resume-modal" class="primary-btn success-btn">▶ RESUME</button>
+                <button id="btn-restart-pause" class="primary-btn warning-btn">↻ RESTART</button>
+                <button id="btn-exit-modal" class="primary-btn danger-btn">🏠 EXIT LEVEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Victory Celebration Modal -->
+    <div id="victory-modal" class="overlay">
+        <canvas id="confetti-canvas" class="confetti-layer"></canvas>
+        <div class="radial-burst"></div>
+        <div class="modal-content celebration-content">
+            <h3 id="victory-level-name">Level 1</h3>
+            <h2 class="celebration-title">LEVEL COMPLETED! 🎉</h2>
+            
+            <div id="victory-stars" class="stars-container">
+                <span class="star-slot">★</span>
+                <span class="star-slot">★</span>
+                <span class="star-slot">★</span>
+            </div>
+            
+            <div id="victory-time-info" class="time-info-badge">Time: 0s | Best: 0s</div>
+            <div class="coin-reward">🪙 <span id="victory-coins">+100</span> COINS</div>
+            
+            <div class="celebration-actions">
+                <button id="btn-next" class="primary-btn celebration-btn success-btn">▶ CONTINUE</button>
+                <button id="btn-replay-celebration" class="primary-btn celebration-btn warning-btn">↻ REPLAY LEVEL</button>
+                <button id="btn-select-celebration" class="primary-btn celebration-btn secondary-btn">🏠 SELECT LEVEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameover-modal" class="overlay">
+        <div class="modal-content">
+            <h2 id="gameover-title" style="color: var(--error-color);">Game Over!</h2>
+            <p id="gameover-msg" style="margin-bottom: 20px;">No hearts left!</p>
+            <button id="btn-restart-modal" class="primary-btn" style="background: var(--error-color);">Restart Level</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+	"folders": [
+		{
+			"path": "ArrowEscape"
+		},
+		{
+			"path": "frontend"
+		},
+		{
+			"path": "levels"
+		},
+		{
+			"path": "shared"
+		},
+		{
+			"path": "tests"
+		},
+		{
+			"path": "android"
+		},
+		{
+			"path": "assets"
+		},
+		{
+			"path": "backend"
+		},
+		{
+			"path": "database"
+		},
+		{
+			"path": "docs"
+		}
+	],
+	"settings": {}
+}

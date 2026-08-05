@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=super-secret-production-key-arrow-escape-2026
+      - DATABASE_URL=sqlite:///./arrow_escape.db
+    volumes:
+      - .:/app
+    restart: always

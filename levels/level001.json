@@ -1,0 +1,28 @@
+{
+  "id": "level001",
+  "name": "Level 1: The Beginning",
+  "difficulty": 1,
+  "grid": {
+    "width": 4,
+    "height": 4
+  },
+  "arrows": [
+    {
+      "id": "a1",
+      "x": 1,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a2",
+      "x": 1,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "default"
+    }
+  ],
+  "rewards": {
+    "coins": 50
+  }
+}

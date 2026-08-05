@@ -18,3 +18,5 @@ class Arrow:
     position: Position
     direction: Direction
     color_theme: str = "default"
+    is_black_master: bool = False
+    is_golden_master: bool = False

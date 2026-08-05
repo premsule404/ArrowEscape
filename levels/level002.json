@@ -1,0 +1,42 @@
+{
+  "id": "level002",
+  "name": "Level 2: Crossroads",
+  "difficulty": 1,
+  "grid": {
+    "width": 4,
+    "height": 4
+  },
+  "arrows": [
+    {
+      "id": "a1",
+      "x": 1,
+      "y": 1,
+      "direction": "RIGHT",
+      "theme": "default"
+    },
+    {
+      "id": "a2",
+      "x": 2,
+      "y": 1,
+      "direction": "UP",
+      "theme": "default"
+    },
+    {
+      "id": "a3",
+      "x": 2,
+      "y": 2,
+      "direction": "DOWN",
+      "theme": "default"
+    },
+    {
+      "id": "a4",
+      "x": 1,
+      "y": 2,
+      "direction": "LEFT",
+      "theme": "default"
+    }
+  ],
+  "rewards": {
+    "coins": 60
+  }
+}

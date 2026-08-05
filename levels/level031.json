@@ -1,0 +1,1184 @@
+{
+  "id": "level031",
+  "name": "Level 31: Master Nexus",
+  "difficulty": 16,
+  "grid": {
+    "width": 14,
+    "height": 14
+  },
+  "arrows": [
+    {
+      "id": "a1",
+      "x": 6,
+      "y": 6,
+      "direction": "RIGHT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a2",
+      "x": 6,
+      "y": 7,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a3",
+      "x": 7,
+      "y": 6,
+      "direction": "RIGHT",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a4",
+      "x": 7,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a5",
+      "x": 5,
+      "y": 5,
+      "direction": "UP",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a6",
+      "x": 5,
+      "y": 6,
+      "direction": "DOWN",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a7",
+      "x": 5,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a8",
+      "x": 5,
+      "y": 8,
+      "direction": "LEFT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a9",
+      "x": 6,
+      "y": 5,
+      "direction": "UP",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a10",
+      "x": 6,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a11",
+      "x": 7,
+      "y": 5,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a12",
+      "x": 7,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a13",
+      "x": 8,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a14",
+      "x": 8,
+      "y": 6,
+      "direction": "RIGHT",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a15",
+      "x": 8,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a16",
+      "x": 8,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a17",
+      "x": 4,
+      "y": 4,
+      "direction": "UP",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a18",
+      "x": 4,
+      "y": 5,
+      "direction": "LEFT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a19",
+      "x": 4,
+      "y": 6,
+      "direction": "DOWN",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a20",
+      "x": 4,
+      "y": 7,
+      "direction": "LEFT",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a21",
+      "x": 4,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a22",
+      "x": 4,
+      "y": 9,
+      "direction": "RIGHT",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a23",
+      "x": 5,
+      "y": 4,
+      "direction": "RIGHT",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a24",
+      "x": 5,
+      "y": 9,
+      "direction": "RIGHT",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a25",
+      "x": 6,
+      "y": 4,
+      "direction": "RIGHT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a26",
+      "x": 6,
+      "y": 9,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a27",
+      "x": 7,
+      "y": 4,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a28",
+      "x": 7,
+      "y": 9,
+      "direction": "DOWN",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a29",
+      "x": 8,
+      "y": 4,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a30",
+      "x": 8,
+      "y": 9,
+      "direction": "DOWN",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a31",
+      "x": 9,
+      "y": 4,
+      "direction": "UP",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a32",
+      "x": 9,
+      "y": 5,
+      "direction": "RIGHT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a33",
+      "x": 9,
+      "y": 6,
+      "direction": "RIGHT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a34",
+      "x": 9,
+      "y": 7,
+      "direction": "RIGHT",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a35",
+      "x": 9,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a36",
+      "x": 9,
+      "y": 9,
+      "direction": "DOWN",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a37",
+      "x": 3,
+      "y": 3,
+      "direction": "LEFT",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a38",
+      "x": 3,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a39",
+      "x": 3,
+      "y": 5,
+      "direction": "LEFT",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a40",
+      "x": 3,
+      "y": 6,
+      "direction": "LEFT",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a41",
+      "x": 3,
+      "y": 7,
+      "direction": "LEFT",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a42",
+      "x": 3,
+      "y": 8,
+      "direction": "LEFT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a43",
+      "x": 3,
+      "y": 9,
+      "direction": "LEFT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a44",
+      "x": 3,
+      "y": 10,
+      "direction": "RIGHT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a45",
+      "x": 4,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a46",
+      "x": 4,
+      "y": 10,
+      "direction": "DOWN",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a47",
+      "x": 5,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a48",
+      "x": 5,
+      "y": 10,
+      "direction": "DOWN",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a49",
+      "x": 6,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a50",
+      "x": 6,
+      "y": 10,
+      "direction": "RIGHT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a51",
+      "x": 7,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a52",
+      "x": 7,
+      "y": 10,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a53",
+      "x": 8,
+      "y": 3,
+      "direction": "UP",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a54",
+      "x": 8,
+      "y": 10,
+      "direction": "DOWN",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a55",
+      "x": 9,
+      "y": 3,
+      "direction": "UP",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a56",
+      "x": 9,
+      "y": 10,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a57",
+      "x": 10,
+      "y": 3,
+      "direction": "UP",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a58",
+      "x": 10,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a59",
+      "x": 10,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a60",
+      "x": 10,
+      "y": 6,
+      "direction": "RIGHT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a61",
+      "x": 10,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a62",
+      "x": 10,
+      "y": 8,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a63",
+      "x": 10,
+      "y": 9,
+      "direction": "DOWN",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a64",
+      "x": 10,
+      "y": 10,
+      "direction": "DOWN",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a65",
+      "x": 2,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a66",
+      "x": 2,
+      "y": 3,
+      "direction": "DOWN",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a67",
+      "x": 2,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a68",
+      "x": 2,
+      "y": 5,
+      "direction": "LEFT",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a69",
+      "x": 2,
+      "y": 6,
+      "direction": "LEFT",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a70",
+      "x": 2,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a71",
+      "x": 2,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a72",
+      "x": 2,
+      "y": 9,
+      "direction": "LEFT",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a73",
+      "x": 2,
+      "y": 10,
+      "direction": "LEFT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a74",
+      "x": 2,
+      "y": 11,
+      "direction": "LEFT",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a75",
+      "x": 3,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a76",
+      "x": 3,
+      "y": 11,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a77",
+      "x": 4,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a78",
+      "x": 4,
+      "y": 11,
+      "direction": "RIGHT",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a79",
+      "x": 5,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a80",
+      "x": 5,
+      "y": 11,
+      "direction": "RIGHT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a81",
+      "x": 6,
+      "y": 2,
+      "direction": "UP",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a82",
+      "x": 6,
+      "y": 11,
+      "direction": "RIGHT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a83",
+      "x": 7,
+      "y": 2,
+      "direction": "UP",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a84",
+      "x": 7,
+      "y": 11,
+      "direction": "DOWN",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a85",
+      "x": 8,
+      "y": 2,
+      "direction": "UP",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a86",
+      "x": 8,
+      "y": 11,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a87",
+      "x": 9,
+      "y": 2,
+      "direction": "UP",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a88",
+      "x": 9,
+      "y": 11,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a89",
+      "x": 10,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a90",
+      "x": 10,
+      "y": 11,
+      "direction": "RIGHT",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a91",
+      "x": 11,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a92",
+      "x": 11,
+      "y": 3,
+      "direction": "DOWN",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a93",
+      "x": 11,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a94",
+      "x": 11,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a95",
+      "x": 11,
+      "y": 6,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a96",
+      "x": 11,
+      "y": 7,
+      "direction": "RIGHT",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a97",
+      "x": 11,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a98",
+      "x": 11,
+      "y": 9,
+      "direction": "DOWN",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a99",
+      "x": 11,
+      "y": 10,
+      "direction": "RIGHT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a100",
+      "x": 11,
+      "y": 11,
+      "direction": "RIGHT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a101",
+      "x": 1,
+      "y": 1,
+      "direction": "DOWN",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a102",
+      "x": 1,
+      "y": 2,
+      "direction": "DOWN",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a103",
+      "x": 1,
+      "y": 3,
+      "direction": "LEFT",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a104",
+      "x": 1,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a105",
+      "x": 1,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a106",
+      "x": 1,
+      "y": 6,
+      "direction": "LEFT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a107",
+      "x": 1,
+      "y": 7,
+      "direction": "LEFT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a108",
+      "x": 1,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a109",
+      "x": 1,
+      "y": 9,
+      "direction": "LEFT",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a110",
+      "x": 1,
+      "y": 10,
+      "direction": "DOWN",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a111",
+      "x": 1,
+      "y": 11,
+      "direction": "LEFT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a112",
+      "x": 1,
+      "y": 12,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a113",
+      "x": 2,
+      "y": 1,
+      "direction": "UP",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a114",
+      "x": 2,
+      "y": 12,
+      "direction": "RIGHT",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a115",
+      "x": 3,
+      "y": 1,
+      "direction": "UP",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a116",
+      "x": 3,
+      "y": 12,
+      "direction": "RIGHT",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a117",
+      "x": 4,
+      "y": 1,
+      "direction": "UP",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a118",
+      "x": 4,
+      "y": 12,
+      "direction": "DOWN",
+      "theme": "blue",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a119",
+      "x": 5,
+      "y": 1,
+      "direction": "UP",
+      "theme": "cyan",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a120",
+      "x": 5,
+      "y": 12,
+      "direction": "DOWN",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a121",
+      "x": 6,
+      "y": 1,
+      "direction": "UP",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a122",
+      "x": 6,
+      "y": 12,
+      "direction": "DOWN",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a123",
+      "x": 7,
+      "y": 1,
+      "direction": "RIGHT",
+      "theme": "purple",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a124",
+      "x": 7,
+      "y": 12,
+      "direction": "RIGHT",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a125",
+      "x": 8,
+      "y": 1,
+      "direction": "RIGHT",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a126",
+      "x": 8,
+      "y": 12,
+      "direction": "DOWN",
+      "theme": "green",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a127",
+      "x": 9,
+      "y": 1,
+      "direction": "RIGHT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a128",
+      "x": 9,
+      "y": 12,
+      "direction": "DOWN",
+      "theme": "yellow",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a129",
+      "x": 10,
+      "y": 1,
+      "direction": "UP",
+      "theme": "orange",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a130",
+      "x": 10,
+      "y": 12,
+      "direction": "RIGHT",
+      "theme": "red",
+      "is_black_master": false,
+      "is_golden_master": false
+    }
+  ],
+  "rewards": {
+    "coins": 360
+  }
+}

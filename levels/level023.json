@@ -1,0 +1,554 @@
+{
+  "id": "level023",
+  "name": "Level 23: Iron Citadel",
+  "difficulty": 11,
+  "grid": {
+    "width": 11,
+    "height": 11
+  },
+  "arrows": [
+    {
+      "id": "a1",
+      "x": 5,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a2",
+      "x": 4,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a3",
+      "x": 4,
+      "y": 5,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a4",
+      "x": 4,
+      "y": 6,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a5",
+      "x": 5,
+      "y": 4,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a6",
+      "x": 5,
+      "y": 6,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a7",
+      "x": 6,
+      "y": 4,
+      "direction": "UP",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a8",
+      "x": 6,
+      "y": 5,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a9",
+      "x": 6,
+      "y": 6,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a10",
+      "x": 3,
+      "y": 3,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a11",
+      "x": 3,
+      "y": 4,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a12",
+      "x": 3,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a13",
+      "x": 3,
+      "y": 6,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a14",
+      "x": 3,
+      "y": 7,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a15",
+      "x": 4,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a16",
+      "x": 4,
+      "y": 7,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a17",
+      "x": 5,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a18",
+      "x": 5,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a19",
+      "x": 6,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a20",
+      "x": 6,
+      "y": 7,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a21",
+      "x": 7,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a22",
+      "x": 7,
+      "y": 4,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a23",
+      "x": 7,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a24",
+      "x": 7,
+      "y": 6,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a25",
+      "x": 7,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a26",
+      "x": 2,
+      "y": 2,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a27",
+      "x": 2,
+      "y": 3,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a28",
+      "x": 2,
+      "y": 4,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a29",
+      "x": 2,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a30",
+      "x": 2,
+      "y": 6,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a31",
+      "x": 2,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a32",
+      "x": 2,
+      "y": 8,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a33",
+      "x": 3,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a34",
+      "x": 3,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a35",
+      "x": 4,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a36",
+      "x": 4,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a37",
+      "x": 5,
+      "y": 2,
+      "direction": "UP",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a38",
+      "x": 5,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a39",
+      "x": 6,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a40",
+      "x": 6,
+      "y": 8,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a41",
+      "x": 7,
+      "y": 2,
+      "direction": "UP",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a42",
+      "x": 7,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a43",
+      "x": 8,
+      "y": 2,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a44",
+      "x": 8,
+      "y": 3,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a45",
+      "x": 8,
+      "y": 4,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a46",
+      "x": 8,
+      "y": 5,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a47",
+      "x": 8,
+      "y": 6,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a48",
+      "x": 8,
+      "y": 7,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a49",
+      "x": 8,
+      "y": 8,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a50",
+      "x": 1,
+      "y": 1,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a51",
+      "x": 1,
+      "y": 2,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a52",
+      "x": 1,
+      "y": 3,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a53",
+      "x": 1,
+      "y": 4,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a54",
+      "x": 1,
+      "y": 5,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a55",
+      "x": 1,
+      "y": 6,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a56",
+      "x": 1,
+      "y": 7,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a57",
+      "x": 1,
+      "y": 8,
+      "direction": "LEFT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a58",
+      "x": 1,
+      "y": 9,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a59",
+      "x": 2,
+      "y": 1,
+      "direction": "RIGHT",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    },
+    {
+      "id": "a60",
+      "x": 2,
+      "y": 9,
+      "direction": "DOWN",
+      "theme": "default",
+      "is_black_master": false,
+      "is_golden_master": false
+    }
+  ],
+  "rewards": {
+    "coins": 280
+  }
+}

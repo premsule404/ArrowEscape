@@ -1,0 +1,1303 @@
+# Arrow Escape - Project Planning & Architecture
+
+Provide a brief description of the problem, any background context, and what the change accomplishes.
+This plan outlines the completion of **Phase 1: Project Planning** for Arrow Escape. It establishes the architectural foundations, folder structures, database schema, and development workflows required to build a scalable, production-ready puzzle game across Web and Android without duplicating core logic.
+
+## User Review Required
+> [!IMPORTANT]
+> Please review this comprehensive architecture and planning document. Once approved, I will proceed to initialize the repository, create the folder structures, and generate the baseline documentation files (`README.md`, Coding Standards, Git Strategy, etc.).
+
+## Open Questions
+> [!WARNING]
+> **Game Engine Portability**
+> You specified: *"The game logic should never be duplicated"* and *"Android uses Kivy, Web uses HTML5/JS Canvas"*. Since Android runs Python and the Web traditionally runs JavaScript, we must choose a strategy to share the engine without rewriting it:
+> 1. **(Recommended)** Write the core engine in Python. Use Kivy to render it on Android. Use **Pyodide / PyScript** to run the Python engine locally in the web browser, allowing JS Canvas to interact with Python directly.
+> 2. Write the core engine in Python on the Backend. The Web Canvas simply sends player inputs (e.g., "clicked arrow at 2,3") to the API, and the server returns the new board state and animation path. This requires constant internet but ensures 100% logic sharing.
+> 
+> How would you prefer to handle this logic sharing?
+
+## Proposed Changes
+
+### 1. Folder Structure & Repository Setup
+I will create the following production-ready modular folder structure:
+
+```text
+ArrowEscape/
+├── docs/                   # Architecture, API docs, game design specs
+├── backend/                # FastAPI application
+│   ├── app/
+│   │   ├── api/            # REST endpoints (auth, levels, progress)
+│   │   ├── core/           # Config, security, JWT
+│   │   ├── db/             # SQLAlchemy sessions and migrations
+│   │   ├── models/         # Database models
+│   │   ├── schemas/        # Pydantic models for validation
+│   │   └── services/       # Business logic for APIs
+├── shared/                 # Shared game engine logic (Python)
+│   ├── engine/             # Arrow movement, collision, win detection, DFS/BFS
+│   └── utils/              # Shared utilities
+├── frontend/               # HTML5/JS Web application
+│   ├── public/             # Assets, index.html
+│   └── src/                # JS rendering (Canvas), UI, API clients
+├── android/                # Kivy mobile application
+│   ├── main.py             # Kivy entry point
+│   └── buildozer.spec      # Android build config
+├── database/               # SQLite (dev) / PostgreSQL (prod) scripts
+├── levels/                 # JSON level files
+├── assets/                 # Shared images, sounds, sprites
+├── tests/                  # Unit and integration tests
+│   ├── test_engine/
+│   └── test_backend/
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
+
+### 2. Development Roadmap & Milestones
+We will strictly follow these milestones (Phases 1-10):
+- **Phase 1: Project Planning** (Current) - Architecture, documentation, Git setup.
+- **Phase 2: Game Design** - UI/UX flow, component docs, specifications.
+- **Phase 3: Game Engine (Core Logic)** - Arrow entities, grid system, collision detection, win state, undo/restart logic (Pure Python).
+- **Phase 4: Level System** - JSON-based level design, parsing, and management.
+- **Phase 5: Web Frontend** - HTML5 Canvas rendering, responsive UI, touch/mouse events.
+- **Phase 6: Backend APIs** - FastAPI setup, auth, progress tracking, hints, coins.
+- **Phase 7: Database Architecture** - SQLAlchemy models.
+- **Phase 8: Frontend-Backend Integration** - Connecting Web UI to FastAPI backend.
+- **Phase 9: Android Version** - Kivy app reusing Python game engine and connecting to APIs.
+- **Phase 10: Deployment** - Render/Railway (Backend), Vercel/Netlify (Web), Buildozer (APK).
+
+### 3. Database Architecture (SQLAlchemy)
+Core tables for Phase 7 will include:
+- `users`: id, username, email, password_hash, created_at, guest_flag
+- `profiles`: user_id, coins, stars, current_theme
+- `levels`: id, level_number, name, difficulty, json_path
+- `progress`: user_id, level_id, status, completion_time
+- `achievements`: id, name, description, reward_coins
+- `user_achievements`: user_id, achievement_id, unlocked_at
+- `settings`: user_id, sound_volume, music_volume, dark_mode
+
+### 4. Coding Standards & Conventions
+- **Python**: PEP-8 compliance, Black for formatting, Flake8 for linting, rigorous Type Hinting (`typing`).
+- **JavaScript/Web**: ES6+ modules, strict mode, Prettier.
+- **Naming Conventions**:
+  - Python variables/functions: `snake_case`
+  - Python classes: `PascalCase`
+  - JavaScript variables/functions: `camelCase`
+  - Database tables: `snake_case`, plural
+  - File names: `snake_case.py` (Python), `kebab-case.js` (Web), `kebab-case.json` (Levels)
+
+### 5. Git Strategy
+- **Branching Model**: Simplified GitFlow.
+  - `main`: Stable, production-ready code.
+  - `feature/<name>`: New features (e.g., `feature/level-parser`).
+- **Commit Messages**: Conventional Commits (e.g., `feat: implement DFS hint generator`, `fix: resolve boundary collision bug`).
+
+## Verification Plan
+
+### Automated Tests
+- No automated tests required yet, as no code is being written in Phase 1.
+
+### Manual Verification
+- Verify the generated folder structure exists.
+- Review the generated `README.md`, `docs/coding_standards.md`, and `docs/git_strategy.md` to ensure they meet the production-ready criteria.
+
+
+# Arrow Escape - Phase 2: Game Design
+
+This document outlines the comprehensive Game Design, UI/UX flow, and visual specifications for Arrow Escape. Completing this design phase ensures we have a clear blueprint before we begin coding the game engine in Phase 3.
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the proposed screens, UX flows, and animations below. Once you approve this design, I will formalize it into `docs/game_design.md`, mark Phase 2 as complete, and we can proceed to Phase 3.
+
+## 1. UX Flow & App Navigation
+The user journey through the application will follow this flow:
+`Splash Screen` ➔ `Authentication` ➔ `Home Screen` ➔ `Level Selection` ➔ `Game Screen` ➔ `Victory Screen` ➔ `Next Level`
+
+## 2. Screen Specifications
+
+### Authentication (Login / Signup / Guest)
+- **Visuals**: Animated background featuring floating arrows.
+- **Components**:
+  - Big bold Logo: "Arrow Escape".
+  - Buttons: `Play as Guest`, `Login`, `Sign Up`.
+  - Input fields for Email and Password.
+- **UX**: Guest mode bypasses authentication entirely and uses local storage/SQLite, which can later be linked to an email.
+
+### Home Screen (Main Menu)
+- **Top Bar**: User Avatar, Player Name, Current Coins (🟡), Total Stars (⭐).
+- **Center**: Large, pulsing `PLAY` button that automatically resumes the highest unlocked level.
+- **Bottom Navigation/Grid**: Icons linking to `Level Select`, `Shop/Themes`, `Leaderboard`, `Achievements`, and `Settings`.
+
+### Level Selection
+- **Layout**: A pagination or scrolling grid of levels (e.g., Level 1 to Level 100).
+- **Level Cards**:
+  - Number of the level.
+  - Up to 3 stars displayed below the number.
+  - A padlock icon and grayed-out look for locked levels.
+
+### Game Screen (Core Gameplay)
+- **Top Bar**: 
+  - Left: `Pause` (||)
+  - Center: `Level X`
+  - Right: `Undo` (↺) and `Hint` (💡)
+- **Center Canvas**: The puzzle grid. Arrows are vibrant and distinct from the background.
+- **UX Rules**: 
+  - Player taps an arrow.
+  - If the path is unblocked to the board edge in the arrow's direction, it slides out.
+  - If blocked, the arrow shakes and plays an "error/blocked" sound.
+
+### Overlays & Menus
+- **Pause Menu (Modal)**: Dims the background. Buttons for `Resume`, `Restart Level`, `Sound Toggle`, `Quit to Menu`.
+- **Victory Screen (Modal)**: 
+  - Dynamic "Level Complete!" text.
+  - Star reveal animation (1, 2, or 3 stars based on time/moves).
+  - Rewards summary (+50 Coins).
+  - Buttons: `Next Level`, `Replay`, `Home`.
+- **Hint Confirmation (Modal)**: "Use 1 Hint for 50 Coins?" -> Yes/No.
+
+### Meta-Game Screens
+- **Shop / Theme Store**: Buy aesthetic changes using in-game coins.
+  - Examples: Neon Arrows, Wooden Arrows, Minimalist Dark Mode.
+- **Leaderboard**: Global ranking tabs (Weekly, All-Time) fetching data from the FastAPI backend.
+- **Achievements**: List of badges (e.g., "First Steps: Clear Level 1", "Perfectionist: 3 Stars on 10 Levels"). Locked badges are silhouetted.
+- **Profile**: View statistics (Total arrows cleared, time played) and link Guest account to Email.
+- **Settings**: Sliders for SFX Volume, Music Volume, and a Dark/Light mode toggle.
+
+## 3. UI Components & Aesthetics
+- **Style**: Modern, clean, slightly rounded edges (e.g., Border radius 12px for Web/CSS). 
+- **Colors**: A deep, satisfying palette. Dark mode by default (slate/navy background with neon-accented arrows).
+- **Animations**:
+  - **Slide-Out**: Swift, easing-in acceleration as the arrow leaves the board.
+  - **Blocked Error**: Rapid horizontal or vertical shake (depending on the arrow's direction).
+  - **Victory Confetti**: Particle explosion on level completion.
+  - **Button Press**: Slight scale-down (0.95x) on pointer down/tap to make UI feel tactile.
+
+## Open Questions
+> [!TIP]
+> Do you have any specific theme in mind for the default graphics? (e.g., Minimalist Flat Design, Neon Cyberpunk, or Wooden Board Game?) 
+> Are there any additional screens or features you'd like to add before we lock in the Game Design?
+
+
+# Arrow Escape - Phase 3: Game Engine Implementation Plan
+
+## Goal Description
+Implement the core puzzle game engine in pure Python. This engine will contain zero UI code, ensuring it is 100% portable across the FastAPI backend, the Web frontend (via Pyodide), and the Android App (Kivy). 
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the proposed class structure and logic flow. Once approved, I will implement these modules in the `shared/engine` directory and write unit tests to verify their behavior.
+
+## Proposed Architecture
+
+We will create the following Python modules inside `/shared/engine`:
+
+### 1. `models.py`
+Defines the primitive data structures using Python `dataclasses` and `enums`.
+- `Direction(Enum)`: `UP`, `DOWN`, `LEFT`, `RIGHT`.
+- `Position(NamedTuple)`: `x: int`, `y: int`.
+- `Arrow(dataclass)`: 
+  - `id: str`
+  - `position: Position`
+  - `direction: Direction`
+  - `color_theme: str` (optional aesthetic data)
+
+### 2. `board.py`
+Manages the mathematical grid and spatial lookups.
+- `Board`:
+  - `width: int`, `height: int`
+  - `arrows: dict[str, Arrow]`
+  - `grid: list[list[Optional[str]]]` (2D array mapping positions to Arrow IDs)
+  - **Methods**: `add_arrow()`, `remove_arrow()`, `get_arrow_at()`, `is_out_of_bounds()`.
+
+### 3. `events.py`
+A simple callback/hook system so the UI (Canvas/Kivy) can subscribe to engine events for animations and sounds.
+- `EventDispatcher`:
+  - Hooks: `on_arrow_slide(arrow)`, `on_arrow_blocked(arrow)`, `on_win()`.
+
+### 4. `engine.py`
+The primary controller that mutates the state.
+- `GameEngine`:
+  - **State**: Current `Board`, `move_history` (stack for Undo).
+  - **Methods**:
+    - `load_level(level_dict: dict)`
+    - `can_move(arrow: Arrow) -> bool`: Checks if the path to the edge of the board in `arrow.direction` is free of other arrows.
+    - `tap_arrow(arrow_id: str) -> bool`: Attempts to move an arrow. Triggers events. If successful, adds to `move_history` and removes the arrow from the board.
+    - `undo() -> bool`: Pops the last move and restores the arrow to the board.
+    - `restart()`: Restores the board to the initial level state.
+    - `is_level_complete() -> bool`: Checks if the board is empty.
+
+### 5. `solver.py` (Hint System)
+Provides algorithmic puzzle solving to generate hints.
+- `HintSystem`:
+  - Uses **Depth-First Search (DFS)** or **Breadth-First Search (BFS)** with memoization (tracking visited board states) to find a valid sequence of arrow taps that clears the board.
+  - **Method**: `get_next_hint(board_state) -> Arrow`
+
+## Verification Plan
+
+### Automated Tests
+I will create a suite of `pytest` unit tests in `/tests/test_engine` to verify:
+1. `test_movement_validation`: Arrows correctly identify if they are blocked or free.
+2. `test_state_mutation`: Tapping a valid arrow successfully removes it and updates the grid.
+3. `test_undo_restart`: Undo stack accurately restores the previous board state.
+4. `test_win_condition`: Engine correctly identifies an empty board as a win.
+5. `test_solver`: The solver can successfully find the solution to a simple 3x3 puzzle.
+
+## Open Questions
+> [!TIP]
+> Are you okay with utilizing Python `dataclasses` and strict typing for the engine? (This is standard best practice and will help prevent bugs when we integrate it with the UI later).
+
+
+# Arrow Escape - Phase 4: Level System Implementation Plan
+
+## Goal Description
+Implement a flexible, JSON-based level system. The game must never hardcode levels. We will define a strict JSON schema for levels, create sample levels, and build a Python parser to load these JSON files directly into our `GameEngine`.
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the proposed JSON schema and parser design below. Once approved, I will implement the parser, generate the first few levels, and write the unit tests.
+
+## Proposed Architecture
+
+### 1. JSON Schema Design (`levels/level001.json`)
+Each level file will contain metadata (for the UI) and grid data (for the engine).
+```json
+{
+  "id": "level001",
+  "name": "The Beginning",
+  "difficulty": 1,
+  "grid": {
+    "width": 4,
+    "height": 4
+  },
+  "arrows": [
+    { "id": "a1", "x": 1, "y": 1, "direction": "UP", "theme": "default" },
+    { "id": "a2", "x": 1, "y": 2, "direction": "RIGHT", "theme": "default" }
+  ],
+  "rewards": {
+    "coins": 50,
+    "stars_thresholds": {
+      "3_stars_moves": 2,
+      "2_stars_moves": 4
+    }
+  }
+}
+```
+
+### 2. Level Parser (`shared/engine/level_parser.py`)
+I will create a utility module to read this JSON and convert it securely into the internal Python objects:
+- `LevelData (dataclass)`: Stores the raw parsed UI data.
+- `LevelParser.load_from_file(filepath: str) -> tuple[GameEngine, LevelData]`
+- **Validation**: Ensure arrows are within grid bounds and directions match the `Direction` Enum.
+
+### 3. Creating Initial Levels
+I will create the first three levels to serve as tutorials:
+- `levels/level001.json`: Very simple, 2 unblocked arrows.
+- `levels/level002.json`: 3 arrows, where one blocks another.
+- `levels/level003.json`: 5 arrows introducing crossing paths.
+
+## Verification Plan
+### Automated Tests
+I will add `tests/test_engine/test_level_parser.py` to verify:
+1. `test_valid_json_parsing`: Successfully loads `level001.json` into a functioning `Board`.
+2. `test_invalid_bounds`: The parser throws an error if an arrow in JSON is placed outside the grid `width`/`height`.
+
+## Open Questions
+> [!TIP]
+> Are you happy with this JSON structure? The `stars_thresholds` allow us to dynamically award 3 stars if the player solves it in the minimum amount of moves (or undos).
+
+
+# Arrow Escape - Phase 5: Web Frontend Implementation Plan
+
+## Goal Description
+Develop a responsive, professional HTML5/Canvas web application for Arrow Escape. Crucially, we will integrate **Pyodide** to run our pure Python game engine (`shared/engine`) directly in the browser. This guarantees zero duplication of game logic while providing an offline, real-time 60FPS web experience.
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the proposed architecture for the Web Frontend. Once approved, I will build out the `index.html`, `styles.css`, and `app.js`, and connect it to our Python engine!
+
+## Proposed Architecture (`frontend/`)
+
+### 1. Structure
+- `frontend/public/index.html`: The single-page app layout, containing the Canvas element, top/bottom navigation UI, modals (Pause, Victory), and importing the Pyodide CDN.
+- `frontend/src/styles.css`: Vanilla CSS utilizing dark mode, flexbox/grid for responsiveness, and beautiful micro-animations for UI buttons.
+- `frontend/src/app.js`: The main JavaScript controller.
+
+### 2. Pyodide Integration (`app.js`)
+When the page loads, `app.js` will:
+1. Download and initialize the Pyodide WebAssembly runtime.
+2. Fetch our Python files (`engine.py`, `models.py`, `board.py`, `level_parser.py`) and mount them into Pyodide's virtual filesystem.
+3. Fetch a level JSON (e.g., `level001.json`).
+4. Execute Python code via JS to instantiate the `GameEngine` and load the level!
+
+### 3. Canvas Rendering (View)
+- `app.js` will feature a `Renderer` class.
+- It calculates the tile size based on screen dimensions to be 100% responsive.
+- Draws a subtle grid background.
+- Draws arrows as colorful rounded rectangles with directional icons (↑ ↓ ← →).
+- Implements an interpolation loop (`requestAnimationFrame`) to handle the smooth slide-out and shake animations when Python events fire.
+
+### 4. Input & Control (Controller)
+- Adds `pointerdown` listeners to the Canvas to support both mouse clicks and touch taps.
+- Calculates which grid cell was tapped.
+- Calls the Python `engine.tap_arrow(id)` function.
+- If Python returns `True`, triggers slide-out. If `False`, triggers the error shake.
+
+## Verification Plan
+### Manual Verification
+- We will open `index.html` in a web browser using a local HTTP server.
+- Verify the canvas scales correctly on desktop and mobile views.
+- Verify tapping an arrow correctly executes the Python logic and slides the arrow.
+
+## Open Questions
+> [!TIP]
+> Are you okay with utilizing Vanilla CSS and JS without a heavy framework like React/Vue? For a Canvas-based game, Vanilla JS is highly performant and keeps the build process simple and lightning-fast.
+
+
+
+# Arrow Escape - Phase 6: Backend APIs Implementation Plan
+
+## Goal Description
+Set up the professional FastAPI backend architecture for Arrow Escape. In this phase, we will scaffold the REST APIs, Pydantic validation schemas, and the JWT Authentication security layer. 
+
+*(Note: We will connect these endpoints to the actual SQLite/PostgreSQL database in Phase 7).*
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the proposed REST API endpoints and backend architecture. Once approved, I will implement the FastAPI application, security utilities, and routers.
+
+## Proposed Architecture (`backend/`)
+
+### 1. Application Entrypoint
+- `backend/app/main.py`: Initializes the FastAPI application, configures CORS (so the web frontend can talk to it), and includes all API routers.
+
+### 2. Core & Security (`backend/app/core/`)
+- `config.py`: Environment variables (e.g., `SECRET_KEY`, `ALGORITHM`).
+- `security.py`: Password hashing (using `bcrypt`) and JWT token generation/validation (using `python-jose`).
+
+### 3. Pydantic Schemas (`backend/app/schemas/`)
+Strict typing for incoming requests and outgoing responses.
+- `user.py`: `UserCreate`, `UserLogin`, `UserResponse`, `Token`.
+- `game.py`: `LevelProgressSync`, `LeaderboardEntry`, `HintRequest`.
+
+### 4. API Endpoints (`backend/app/api/`)
+We will create modular routers for different domains:
+
+**Authentication (`auth.py`)**
+- `POST /api/auth/signup`: Register a new user.
+- `POST /api/auth/login`: Authenticate and return a JWT access token.
+- `POST /api/auth/guest`: Generate a temporary guest token.
+
+**Users (`users.py`)**
+- `GET /api/users/me`: Fetch current profile (Coins, Stars).
+- `PUT /api/users/settings`: Update settings (Sound, Dark mode).
+
+**Game & Progress (`game.py`)**
+- `POST /api/game/sync`: Upload cloud save (cleared levels, coins earned).
+- `GET /api/game/levels`: Fetch available levels and lock status.
+- `GET /api/game/leaderboard`: Fetch global top players.
+
+## Verification Plan
+### Manual Verification
+- We will start the FastAPI server using `uvicorn backend.app.main:app --reload`.
+- We will visit `http://localhost:8000/docs` to view the automatically generated Swagger UI API documentation and verify all endpoints are correctly registered.
+
+## Open Questions
+> [!TIP]
+> Does this endpoint structure look good? By creating the API skeleton now, the Web Frontend can immediately start calling the endpoints, and we will wire up the persistent database storage in Phase 7.
+
+
+
+# Arrow Escape - Phase 7: Database Architecture Implementation Plan
+
+## Goal Description
+Design and implement a professional, scalable database architecture for Arrow Escape using **SQLAlchemy**. We will use SQLite for local development (which requires zero setup) and it will be easily portable to PostgreSQL for production deployment.
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the proposed database schemas below. Once approved, I will implement the SQLAlchemy models and configure the database session!
+
+## Proposed Architecture (`backend/app/models/`)
+
+We will create the following tables spread across domain-specific modules:
+
+### 1. Core & Auth (`user.py`)
+- **`users` table**:
+  - `id` (Primary Key)
+  - `username` (String, Unique)
+  - `email` (String, Unique, Nullable)
+  - `hashed_password` (String)
+  - `is_guest` (Boolean)
+  - `created_at` (DateTime)
+
+### 2. Game Progress (`game.py`)
+- **`levels` table**:
+  - `id` (String, Primary Key - e.g., "level001")
+  - `name` (String)
+  - `difficulty` (Integer)
+- **`progress` table**:
+  - `id` (Integer)
+  - `user_id` (Foreign Key -> `users.id`)
+  - `level_id` (Foreign Key -> `levels.id`)
+  - `stars` (Integer)
+  - `best_moves` (Integer)
+  - `completed_at` (DateTime)
+- **`achievements` table**:
+  - `id` (String, Primary Key)
+  - `name` (String)
+  - `description` (String)
+  - `reward_coins` (Integer)
+- **`user_achievements` table**:
+  - Maps `user_id` to `achievement_id` with an `unlocked_at` timestamp.
+
+### 3. Economy & Store (`store.py`)
+- **`profiles` table**: (1-to-1 with `users`)
+  - `user_id` (Primary Key)
+  - `coins` (Integer, Default 0)
+  - `total_stars` (Integer, Default 0)
+  - `current_theme` (String)
+- **`themes` table**:
+  - `id` (String, Primary Key)
+  - `name` (String)
+  - `cost` (Integer)
+- **`purchases` table**:
+  - Maps `user_id` to `theme_id` representing ownership.
+
+### 4. Meta & Settings (`stats.py`)
+- **`settings` table**: (1-to-1 with `users`)
+  - `user_id` (Primary Key)
+  - `sound_enabled` (Boolean)
+  - `dark_mode` (Boolean)
+- **`statistics` table**:
+  - `user_id` (Primary Key)
+  - `total_arrows_cleared` (Integer)
+  - `total_hints_used` (Integer)
+
+## Next Steps
+Once I implement these SQLAlchemy classes:
+1. I will set up `backend/app/db/session.py` to auto-create the SQLite database file (`arrow_escape.db`).
+2. We will integrate these models into the API endpoints we built in Phase 6 so the Backend is fully functional!
+
+## Open Questions
+> [!TIP]
+> Are there any additional statistics or tables you want tracked for players before we finalize this database design?
+
+
+
+# Arrow Escape - UI/UX Game Design Master Plan
+
+## Goal Description
+Finalize and rigorously document the complete Game Design, UI/UX architecture, and Visual Identity for Arrow Escape based on a Modern Minimalist Puzzle Design. This design phase will establish the blueprint for all Frontend development across Web, Android, Tablet, and Desktop, strictly adhering to Material Design 3 principles.
+
+*Per your request, absolutely no coding will occur during this phase until these design documents are finalized and approved.*
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the list of design artifacts I intend to generate. Once you approve this plan, I will generate all 7 comprehensive design documents (using Markdown and Mermaid diagrams) and present them to you.
+
+## Proposed Design Artifacts to Generate
+
+During execution, I will create the following Markdown artifacts in our workspace:
+
+### 1. Complete UI Flow Diagram (`ui_flow_diagram.md`)
+- A high-level Mermaid flowchart mapping the entire user journey from the Splash Screen to Authentication, Main Menu, Gameplay, and Settings.
+
+### 2. Wireframes for Every Screen (`wireframes.md`)
+- Detailed Markdown-based wireframes (using structural layouts) for all requested screens, including:
+  - **Auth**: Splash, Login, Sign Up, Guest, Password Reset.
+  - **Main Menu**: Dashboard, Level Select, Daily Challenge, Profile, Shop.
+  - **Gameplay**: HUD, Pause Menu, Win/Lose overlays.
+  - **Admin & QoL**: Admin Dashboard, Settings, Loading/Error screens.
+
+### 3. Component Library (`component_library.md`)
+- Specifications for reusable UI components.
+- Definitions for Primary Buttons, Icon Buttons, Cards, Dialog Modals, and Navigation Bars.
+
+### 4. Navigation Flow (`navigation_flow.md`)
+- A deep-dive Mermaid state diagram focusing purely on the routing stack (e.g., how the back button behaves, modals popping over screens, and tab navigation).
+
+### 5. Game State Flow Diagram (`game_state_flow.md`)
+- A logical flow diagram defining the game engine's states: `LOADING`, `IDLE`, `ANIMATING`, `PAUSED`, `LEVEL_COMPLETE`, `GAME_OVER`.
+
+### 6. UI Style Guide (`ui_style_guide.md`)
+- **Colors**: Hex codes and usage for Primary (#4F8EF7), Secondary (#7B61FF), Accent, Success, Error, and Dark/Light Backgrounds.
+- **Typography**: Font families, weights, and scale (Material 3).
+- **Spacing & Shapes**: Border radiuses, elevation/shadow levels, and padding scales.
+
+### 7. Asset List (`asset_list.md`)
+- A comprehensive checklist of all visual and audio assets required for development (e.g., arrow SVG variants, background music tracks, sound effects, particle sprites).
+
+## Open Questions
+> [!TIP]
+> Are there any specific font families you prefer for the Typography (e.g., *Inter, Roboto, Poppins, Outfit*), or should I select a modern sans-serif like *Inter* for the Style Guide?
+
+# Arrow Escape - Complete UI Flow Diagram
+
+This document illustrates the high-level user journey and screen hierarchy across the entire application.
+
+```mermaid
+graph TD
+    Splash[Splash Screen] --> Init[Initialize App & Engine]
+    Init --> AuthCheck{Is Authenticated?}
+    
+    %% Authentication Flow
+    AuthCheck -- No --> Welcome[Welcome Screen]
+    Welcome --> Login[Login]
+    Welcome --> SignUp[Sign Up]
+    Welcome --> Guest[Play as Guest]
+    
+    Login --> ForgotPwd[Forgot Password]
+    SignUp --> EmailVerif[Email Verification]
+    
+    Login --> Dashboard
+    Guest --> Dashboard
+    EmailVerif --> Dashboard
+    AuthCheck -- Yes --> Dashboard
+    
+    %% Main Menu Flow
+    subgraph Main Menu
+        Dashboard[Home Dashboard]
+        Dashboard --> Continue[Continue Game]
+        Dashboard --> LevelSelect[Level Selection]
+        Dashboard --> Daily[Daily Challenge]
+        Dashboard --> Profile[Player Profile]
+        Dashboard --> Shop[Shop]
+        Dashboard --> Social[Leaderboards & Friends]
+        Dashboard --> Settings[Settings]
+    end
+    
+    %% Gameplay Transition
+    Continue --> Loading[Loading Screen]
+    LevelSelect --> Loading
+    Daily --> Loading
+    Loading --> Gameplay
+    
+    %% Gameplay Flow
+    subgraph Gameplay Loop
+        Gameplay[Game HUD & Board]
+        Gameplay -->|Player Pauses| Pause[Pause Menu]
+        Pause -->|Resume| Gameplay
+        Pause -->|Restart| Gameplay
+        Pause -->|Options| Overlay[Settings Overlay]
+        Pause -->|Quit| Dashboard
+        
+        Gameplay -->|Win Condition| Win[Level Complete]
+        Win -->|Rewards Anim| Next[Next Level]
+        Win --> Dashboard
+        
+        Gameplay -->|Lose Condition| Lose[Game Over]
+        Lose -->|Retry| Gameplay
+        Lose --> Dashboard
+    end
+```
+
+
+
+# Arrow Escape - Phase 8: Production API & Frontend Architecture
+
+## Goal Description
+We will execute a massive architectural refactoring. First, we will rebuild the FastAPI backend to match your rigorous, production-ready `/api/v1/` REST design. Second, we will restructure the frontend into a highly modular Vanilla JS architecture. Finally, we will integrate them.
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the comprehensive steps below. Because you provided incredibly detailed constraints for both the FastAPI routes and the Frontend JS directory structure, I have combined them into this definitive Phase 8 plan. Once approved, I will write the code!
+
+## Refactoring & Integration Steps
+
+### Step 1: FastAPI `/api/v1/` REST Architecture
+I will restructure `backend/app/api/` to include all the modules you requested, perfectly grouped under the `/api/v1/` prefix:
+- `auth.py`, `users.py`, `game.py`, `levels.py`, `progress.py`
+- `achievements.py`, `coins.py`, `themes.py`, `leaderboard.py`
+- `daily.py`, `shop.py`, `stats.py`, `notifications.py`
+- `admin.py` (Protected), `health.py`
+- *Note: Since we already built the massive SQLAlchemy database in Phase 7, I will wire these routes directly to the real database rather than using mock data!*
+
+### Step 2: Global API Exception Handling & Logging
+- Create `backend/app/core/exceptions.py` for centralized error catching.
+- Ensure all endpoints return consistent JSON structures and correct HTTP status codes (200, 201, 400, 401, 403, 404).
+
+### Step 3: Frontend Directory Restructuring (Vanilla JS)
+I will reorganize the `frontend` folder to exactly match your required architecture:
+```
+/frontend
+│── assets/
+│── css/
+│── js/
+│   ├── core/ (game loop)
+│   ├── engine/ (pyodide loader)
+│   ├── ui/ (modals, screens)
+│   ├── api/ (client.js)
+│   ├── utils/
+│   └── main.js
+│── index.html
+```
+
+### Step 4: Vanilla JS API Client (`frontend/js/api/client.js`)
+- Implement a pure Vanilla JS `ApiClient` utilizing `async/await` and the native `fetch()` API.
+- Map out the JS functions corresponding to the `/api/v1/` endpoints.
+- Store the JWT `access_token` in `localStorage` and attach it as a Bearer token to all requests.
+
+## Verification Plan
+1. We will check `http://localhost:8000/docs` to see all ~40 endpoints properly documented in Swagger under `/api/v1/`.
+2. We will verify the frontend loads correctly from the new modular ES6 structure.
+3. We will register an account and test an API call directly from the web browser.
+
+## Open Questions
+> [!TIP]
+> Are you ready to dive into the code for this massive Phase 8 integration?
+
+
+
+# Arrow Escape - Phase 9: Android Version Implementation Plan
+
+## Goal Description
+Build the native Android version of Arrow Escape using **Kivy**, a hardware-accelerated Python UI framework. Because we built our core `shared/engine` with pure Python, we can directly import it into Kivy without rewriting a single line of game logic!
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the architectural steps below for the Kivy implementation. Once approved, I will write the Python code that connects Kivy's touch events and graphics engine to our shared game logic!
+
+## Implementation Steps
+
+### Step 1: Initialize Android Structure
+I will create the `android/` directory with the following structure:
+- `android/main.py`: The main Kivy application entry point.
+- `android/ui/`: Contains custom Kivy Widgets for the game UI.
+- `android/buildozer.spec`: The configuration file required to compile the Python code into a native `.apk` file for Android devices.
+
+### Step 2: Build the Kivy Game Board Widget (`board_widget.py`)
+- I will create a `GameBoardWidget` that inherits from Kivy's `Widget` class.
+- It will import our exact `GameEngine` from `shared.engine.engine`.
+- Using Kivy's Canvas graphics instructions (`Color`, `RoundedRectangle`), it will dynamically draw the grid and arrows based on the engine's internal state.
+
+### Step 3: Map Touch Controls
+- I will override Kivy's `on_touch_down` event inside the `GameBoardWidget`.
+- When a player taps the screen, we will convert the (x,y) screen coordinates to grid (x,y) coordinates and call `engine.tap_arrow(arrow_id)`.
+- If the move is valid, the engine will handle the logic, and Kivy will instantly redraw the screen.
+
+## Verification Plan
+1. We will run `python android/main.py` directly on your Windows machine to test the Kivy app natively in a desktop window.
+2. We will verify that tapping arrows removes them and correctly triggers the "Level Complete" logic.
+3. *Note: Compiling to an actual `.apk` requires a Linux environment (via WSL or a VM) running Buildozer, which we can set up later if desired.*
+
+## Open Questions
+> [!TIP]
+> Does this plan for the native Android architecture look good to you?
+
+
+
+# Arrow Escape - Phase 9: Finalize Web Version
+
+## Goal Description
+Per your roadmap recommendation, we are dedicating Phase 9 entirely to finalizing, polishing, and fully testing the Web Frontend. This ensures our shared game logic is 100% bulletproof and the UI flow is perfect before we package the Android APK in Phase 10.
+
+## User Review Required
+> [!IMPORTANT]
+> Please review the focus areas for Phase 9 below. Once you approve, I will execute the final JavaScript refactoring and CSS polish!
+
+## Implementation Steps
+
+### Step 1: Deconstruct the Monolith
+In Phase 8 we created the modular directory structure. Now, I will break apart our monolithic `frontend/js/main.js` into the correct ES6 modules:
+- **`engine/pyodide_loader.js`**: Purely handles downloading the Python files and initializing the interpreter.
+- **`core/game_loop.js`**: Handles the Canvas rendering (`requestAnimationFrame`) and input event listeners.
+- **`ui/screens.js`**: Handles the DOM manipulation to transition between the Auth, Dashboard, and Gameplay screens.
+
+### Step 2: UI Implementation (Matching Design Docs)
+- Apply the `Inter` and `Poppins` typography hierarchy from our Style Guide.
+- Implement the CSS for the glassmorphism Modals, Primary Buttons, and the Dark/Light theme switching mechanism using CSS Variables.
+
+### Step 3: Connect the API Client
+- Wire up the Login/Signup forms to use our `frontend/js/api/client.js`.
+- When the `LevelComplete` logic triggers in the game loop, automatically call the API to save the progress to our FastAPI backend.
+
+## Verification Plan
+1. We will play the game in the browser (`http://localhost:8000/frontend/index.html`).
+2. We will verify the screen transitions are smooth.
+3. We will log into an account, beat a level, and verify the FastAPI server logs show a successful `200 OK` cloud save!
+
+## Open Questions
+> [!TIP]
+> This is a brilliant roadmap change. Are you ready for me to finalize the Web Frontend code?
+
+
+# Arrow Escape - Phase 10: Android Application Implementation Plan
+
+## Goal Description
+Implement the production-ready Android version using **Kivy** and the shared pure-Python game engine (`shared/engine`). The architecture completely isolates the engine from UI/Kivy code, featuring modular screens (`ScreenManager`), background services (`ApiService`, `StorageService`, `AudioService`), and offline local storage fallback.
+
+## Proposed Changes
+
+### Android Component (`android/`)
+
+#### [NEW] `android/app.py`
+Main Kivy `App` class configuring the `ScreenManager` and initializing core services.
+
+#### [NEW] `android/services/api_service.py`
+API client service using Python `urllib` / `requests` / `async` to communicate with the FastAPI `/api/v1/` endpoints.
+
+#### [NEW] `android/services/storage_service.py`
+Local offline progress persistence using Kivy's `JsonStore`. Syncs with cloud when network connection is available.
+
+#### [NEW] `android/services/audio_service.py`
+Sound effects and music manager using Kivy `SoundLoader`.
+
+#### [NEW] `android/ui/menu_screen.py`
+Main menu screen layout with options for Play, Level Select, Settings, Profile, Leaderboards.
+
+#### [NEW] `android/ui/level_select.py`
+Grid layout of available levels displaying stars earned and completion status.
+
+#### [NEW] `android/ui/settings_screen.py`
+Controls for audio levels, theme selection, and language options.
+
+#### [MODIFY] `android/ui/board_widget.py`
+Refactor `GameBoardWidget` to work seamlessly with `ScreenManager` and dynamic resolution scaling.
+
+#### [MODIFY] `android/main.py`
+Entrypoint script launching `ArrowEscapeApp` from `app.py`.
+
+---
+
+## Verification Plan
+
+### Manual Verification
+- Run `python android/main.py` locally to launch the desktop Kivy window.
+- Test navigation between Main Menu, Level Select, Settings, and Game Board screens.
+- Verify game controls, arrow movements, win conditions, and undo/restart features inside Kivy.
+- Verify offline state handling via `JsonStore`.
+
+
+
+
+1. Web Version & Backend Server
+To launch the FastAPI backend server (which serves the API and database on port 8000):
+
+powershell
+uvicorn backend.app.main:app --reload
+Or to serve the static Web Frontend via Python's HTTP server:
+
+powershell
+python -m http.server 8000
+🌐 Accessing in Browser: Open your browser and go to: http://localhost:8000/frontend/index.html
+
+2. Android (Kivy) Desktop Application
+To launch and test the Android native app directly on your desktop:
+
+powershell
+python android/main.py
+3. Run Automated Engine Unit Tests
+To run the verification test suite for winding paths, collision detection, hearts, and level loading:
+
+powershell
+python tests/test_winding_engine.py
+python tests/test_level_loading.py
+
+# Implementation Plan: Universal Gameplay Engine & Celebration System
+
+Implement shared game state management, time-based star reward system, centralized timer calculations, polished level completion celebration overlay, pause/resume system, and mobile background interruption handling across all 20 levels in both Web and Kivy Android applications.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Timer Formula Standardization**:
+> Canonical metric: `total_arrows` (total required moves in the level).
+> Centralized formula: `total_allowed_time = total_arrows + 10` seconds.
+> All star calculation thresholds will be derived directly from percentages of `total_allowed_time`:
+> - **3 Stars**: Elapsed Time $\le$ 50% of Total Time
+> - **2 Stars**: 50% < Elapsed Time $\le$ 70% of Total Time
+> - **1 Star**: 70% < Elapsed Time $\le$ 80% of Total Time
+> - **0 Stars**: Elapsed Time > 80% of Total Time
+
+> [!NOTE]
+> **Safe Reward Policy & Replay Behavior**:
+> - Base coins awarded on level completion.
+> - First completion awards `base_level_coins` to player's total balance. Replays award 0 base coins to prevent infinite coin farming.
+> - Best performance is preserved: `best_stars = max(previous_best_stars, current_stars)`, `best_time = min(previous_best_time, current_time)`. A worse run will never overwrite a superior score.
+
+## Open Questions
+
+None. All 15 requirements from the specification are fully detailed and self-consistent.
+
+---
+
+## Proposed Changes
+
+### Core Shared Engine (`shared/engine/`)
+
+#### [NEW] [constants.py](file:///d:/ArrowEscape/shared/engine/constants.py)
+- Define `GameState` Enum: `READY`, `PLAYING`, `PAUSED`, `COMPLETED`, `FAILED`.
+- Define `STAR_THRESHOLDS`: `three_star: 0.50`, `two_star: 0.70`, `one_star: 0.80`.
+- Define centralized timer function: `calculate_allowed_level_time(total_arrows: int) -> float`.
+- Define star calculation function: `calculate_stars(elapsed_time: float, total_time: float) -> int`.
+
+#### [MODIFY] [engine.py](file:///d:/ArrowEscape/shared/engine/engine.py)
+- Integrate explicit `GameState` state machine with strict transition rules.
+- Add `elapsed_time` tracking (strictly frozen when `PAUSED`).
+- Implement `pause()` and `resume()` methods with event dispatches (`on_pause`, `on_resume`).
+- Update `load_level()` to set state to `GameState.READY` / `PLAYING` and use `calculate_allowed_level_time()`.
+- Update `tick_timer()` to respect `GameState.PLAYING` and transition to `GameState.FAILED` ("times_up").
+- Update `tap_arrow()` to check `GameState.PLAYING` and transition to `GameState.FAILED` ("out_of_hearts") or `GameState.COMPLETED` ("on_win").
+- Calculate final stars and base coins on completion.
+
+---
+
+### Level Migration (`generate_levels.py` & JSON Files)
+
+#### [MODIFY] [generate_levels.py](file:///d:/ArrowEscape/generate_levels.py)
+- Remove deprecated move-based keys (`3_stars_moves`, `2_stars_moves`).
+- Retain `"rewards": {"coins": base_coins}` across all 20 levels.
+- Regenerate `levels/level001.json` through `level020.json`.
+
+---
+
+### Kivy Android Implementation (`android/`)
+
+#### [MODIFY] [game_screen.py](file:///d:/ArrowEscape/android/ui/game_screen.py)
+- Update HUD top bar to display: Level Title (`Level X`), Progress (`17 / 20`), Lives (`♥ ♥ ♥`), Timer (`00:23`), Moves (`12`), Pause Button (`⏸`).
+- Implement Pause Modal with Resume (`▶`), Restart (`↻`), Exit (`🏠`).
+- Implement Level Completion Celebration Overlay with:
+  - Dark transparent backdrop
+  - Radial light burst / celebration background
+  - Particle / confetti simulation
+  - Animated star reveal (0 to 3 stars)
+  - Coins count-up animation (`🪙 +XX`)
+  - Continue button unlocking next level (preventing double claims)
+
+#### [MODIFY] [app.py](file:///d:/ArrowEscape/android/app.py)
+- Bind Kivy `App.on_pause()` and `App.on_resume()` to automatically pause the `GameEngine` when the mobile app enters the background or loses focus.
+
+---
+
+### Web Frontend Implementation (`frontend/`)
+
+#### [MODIFY] [index.html](file:///d:/ArrowEscape/frontend/index.html)
+- Update top bar HUD markup with Level, Progress, Lives, Timer, Moves, and Pause (`⏸`) button.
+- Create Pause Modal markup with Resume, Restart, Exit.
+- Create Level Complete Celebration Overlay markup with canvas confetti layer, animated stars container, coins counter, and Continue button.
+
+#### [MODIFY] [styles.css](file:///d:/ArrowEscape/frontend/css/styles.css)
+- Add styles for HUD elements, Pause modal, Celebration overlay, radial light burst, star pop animations, and coin counter.
+
+#### [MODIFY] [game_loop.js](file:///d:/ArrowEscape/frontend/js/core/game_loop.js)
+- Update loop to handle `GameState.PAUSED`, `GameState.COMPLETED`, `GameState.FAILED`.
+- Wire up Pause button, Resume button, and background tab blur event (`window.onblur`).
+- Trigger celebration overlay sequence on level completion.
+
+#### [MODIFY] [screens.js](file:///d:/ArrowEscape/frontend/js/ui/screens.js)
+- Implement celebration animation helpers, star reveal delay, coin count-up ticker, and continue button handler.
+
+---
+
+### Automated Test Suite (`tests/`)
+
+#### [NEW] [test_gameplay_rules.py](file:///d:/ArrowEscape/tests/test_engine/test_gameplay_rules.py)
+- Unit tests for:
+  - 50% time -> 3 stars
+  - >50% & <=70% time -> 2 stars
+  - >70% & <=80% time -> 1 star
+  - >80% time -> 0 stars
+  - Timer reaching 0 -> FAILED
+  - Pause freezes timer and elapsed gameplay time
+  - Resume continues timer accurately without counting real-world paused time
+  - Hearts preserved through pause/resume
+  - Completion freezes timer and disables arrow input
+  - Replay does not overwrite better best score
+  - First completion awards coins; replay awards 0 base coins
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Run `pytest` to verify all engine unit tests and gameplay rules pass.
+
+### Manual Verification
+- Test Web app in browser: HUD elements, Pause/Resume, Celebration overlay animations, Continue button.
+- Test Android Kivy app via `python android/main.py`: HUD elements, Pause popup, App lifecycle pause on window focus change, Celebration popup sequence.
+
+
+
+# Implementation Plan: Complete Gameplay & Reward System
+
+Comprehensive implementation of the Replay Level button, Star-based coin reward formula, Incremental Coin Reward Policy, Heart HUD icons, visible Pause button HUD, Level Select Stars & Summary, and 20 automated unit tests.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Star-Based Coin Reward Formula**:
+> - **3 Stars**: 100% of `base_coins` (`base_coins`)
+> - **2 Stars**: 70% of `base_coins` (`round(base_coins * 0.70)`)
+> - **1 Star**: 50% of `base_coins` (`round(base_coins * 0.50)`)
+> - **0 Stars**: 0 coins (`0`)
+
+> [!IMPORTANT]
+> **Incremental Coin Reward Policy (No Farming)**:
+> - Each level tracks `best_coins_unlocked` (the highest coin amount earned for that level so far).
+> - On level completion: `incremental_coins = max(0, current_run_coins - best_coins_unlocked)`.
+> - Only `incremental_coins` are added to the player's total wallet balance.
+> - The completion screen explicitly displays `🪙 +incremental_coins COINS`. Replaying a level already completed at 3 stars awards `🪙 +0 COINS`.
+
+> [!NOTE]
+> **Timer Formula Standardization**:
+> - Centralized formula: $\text{Total Allowed Time} = \text{Total Moves} + 10\text{ seconds}$.
+> - Example: 20 arrows = 30 seconds total time.
+
+---
+
+## Proposed Changes
+
+### Core Shared Engine (`shared/engine/`)
+
+#### [MODIFY] [constants.py](file:///d:/ArrowEscape/shared/engine/constants.py)
+- Set `calculate_allowed_level_time(total_arrows)` to `float(total_arrows + 10)`.
+- Implement `calculate_coin_reward(stars: int, base_coins: int) -> int` according to the 100% / 70% / 50% / 0% formula.
+
+#### [MODIFY] [engine.py](file:///d:/ArrowEscape/shared/engine/engine.py)
+- Integrate incremental coin reward calculation into `tap_arrow()` on level completion.
+- Support 0 stars completion (level is complete as long as time did not expire).
+- Include `elapsed_time`, `stars`, `total_coins_earned`, `incremental_coins`, `previous_unlocked_coins`, and `is_new_best` in `on_win` payload.
+
+---
+
+### Storage & Persistence (`android/services/storage_service.py`)
+
+#### [MODIFY] [storage_service.py](file:///d:/ArrowEscape/android/services/storage_service.py)
+- Store `total_coins` and level progress records (`completed`, `stars`, `best_time`, `best_moves`, `unlocked_coins`, `attempt_count`).
+- Add helper method `get_player_summary()` returning `total_stars`, `total_coins`, `completed_count`.
+
+---
+
+### Kivy Android UI (`android/ui/`)
+
+#### [MODIFY] [game_screen.py](file:///d:/ArrowEscape/android/ui/game_screen.py)
+- **Top HUD**: Display `Level X` (`Progress: 17/20`), Lives (`❤️ ❤️ ❤️` via markup), Timer (`⏱ 00:23`), Moves (`M:12`), and Pause Button (`⏸` always visible).
+- **Level Complete Screen**:
+  - Show Level Name, `LEVEL COMPLETED!`, Stars (`⭐⭐⭐` / `⭐⭐☆` / `⭐☆☆` / `☆☆☆`), `Time` vs `Best Time`, `🏆 NEW BEST!` indicator, `🪙 +XX COINS` (incremental coins).
+  - Three buttons: `[ ▶ CONTINUE ]`, `[ ↻ REPLAY LEVEL ]`, `[ 🏠 SELECT LEVEL ]`.
+- **Replay Handler**: Resets level state (`hearts=3`, `time_remaining=total_time`, `moves=0`, `state=READY`), preserves previous best records.
+
+#### [MODIFY] [level_select.py](file:///d:/ArrowEscape/android/ui/level_select.py)
+- Top Summary Banner: `⭐ X / 60 Total Stars`, `🪙 X Coins`, `🏆 X / 20 Levels Completed`.
+- Level Cards:
+  - Completed levels display `Level X` and historical `best_stars` (`⭐⭐⭐`, `⭐⭐☆`, `⭐☆☆`, `☆☆☆`).
+  - Locked levels display `Level X` with lock icon (`🔒`).
+
+---
+
+### Web Frontend (`frontend/`)
+
+#### [MODIFY] [index.html](file:///d:/ArrowEscape/frontend/index.html)
+- Add Pause button `⏸`, `Progress` badge, and `Moves` badge to top HUD.
+- Update Level Complete Screen with `[ ▶ CONTINUE ]`, `[ ↻ REPLAY LEVEL ]`, `[ 🏠 SELECT LEVEL ]` buttons.
+
+#### [MODIFY] [styles.css](file:///d:/ArrowEscape/frontend/css/styles.css)
+- Add styles for Pause button, Replay button, HUD elements, Level Select summary banner, and 0-star completion presentation.
+
+#### [MODIFY] [screens.js](file:///d:/ArrowEscape/frontend/js/ui/screens.js) & [game_loop.js](file:///d:/ArrowEscape/frontend/js/core/game_loop.js) & [main.js](file:///d:/ArrowEscape/frontend/js/main.js)
+- Wire up `Replay Level` button to reload current level state.
+- Wire up `Select Level` button to open level selection screen.
+- Update completion display with incremental coins and `Time` / `Best Time`.
+
+---
+
+### Test Suite (`tests/test_engine/test_gameplay_rules.py`)
+
+#### [MODIFY] [test_gameplay_rules.py](file:///d:/ArrowEscape/tests/test_engine/test_gameplay_rules.py)
+Write all 20 required unit tests:
+1. 3 stars $\rightarrow$ 100% coins
+2. 2 stars $\rightarrow$ 70% coins
+3. 1 star $\rightarrow$ 50% coins
+4. 0 stars $\rightarrow$ 0 coins
+5. Replay resets current level correctly
+6. Replay preserves previous best score
+7. Better replay updates best stars
+8. Worse replay does not reduce best stars
+9. Better replay awards only incremental coins
+10. Replaying after maximum reward gives 0 additional coins
+11. Heart HUD initially displays exactly 3 hearts
+12. Wrong move removes exactly one heart
+13. Pause button is visible and functional
+14. Pause freezes timer
+15. Resume continues from exact previous state
+16. Level Select displays best stars
+17. Uncompleted levels display ☆☆☆
+18. Locked levels remain locked
+19. Level completion updates Level Select
+20. Coin transactions cannot be duplicated
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Run `pytest` to execute all 20 unit tests in `tests/test_engine/test_gameplay_rules.py`.
+
+### Manual Verification
+- Test Android App via `python android/main.py`:
+  - Verify HUD top bar: Level, Progress, Lives (`❤️ ❤️ ❤️`), Timer, Moves, Pause (`⏸`).
+  - Verify Pause popup (`▶ RESUME`, `↻ RESTART`, `⚙ SETTINGS`, `🏠 EXIT LEVEL`).
+  - Verify Level Complete screen buttons: `[ ▶ CONTINUE ]`, `[ ↻ REPLAY LEVEL ]`, `[ 🏠 SELECT LEVEL ]`.
+  - Verify Replay resets level without erasing best score.
+  - Verify Level Select screen summary banner and per-level best stars & lock status.
+
+
+
+# Implementation Plan: Replay Timer Fix & Levels 21–30 Expansion
+
+Comprehensive resolution of the replay timer bug, standardization of the timer formula ($1\text{ arrow} = 1\text{ second}$), addition of 10 new advanced tier levels (Levels 21–30) with 100% verified solvability, and extension of Level Select to 30 levels (90 max stars).
+
+## 🔍 Root Cause of Replay Timer Bug
+
+When a level was completed, `on_win` in `android/ui/game_screen.py` cancelled Kivy's timer event (`self.timer_event.cancel(); self.timer_event = None`). When `↻ REPLAY LEVEL` / `on_restart` was triggered, `self.engine.restart()` reset engine parameters, but **`self.timer_event` was never re-scheduled**!
+As a result, `Clock.schedule_interval(self.on_timer_tick, 0.1)` was missing on replay, causing the countdown timer to stay frozen.
+
+---
+
+## 🛠️ Proposed Technical Changes
+
+### 1. Unified Attempt Initialization (`android/ui/game_screen.py`)
+
+Create a single, centralized `start_attempt()` method in `game_screen.py` used by:
+1. First time level load (`load_level_number`)
+2. Replaying after completion (`↻ REPLAY LEVEL`)
+3. Restarting during gameplay (`↻ RESTART` in Pause Menu / Footer)
+4. Retrying after failure (`↻ RESTART` in Game Over)
+
+`start_attempt()` lifecycle:
+- Unschedules/cancels any existing Kivy `timer_event`.
+- Dismisses any active popups.
+- Calls `self.engine.restart()`.
+- Schedules **exactly ONE** fresh timer event callback (`Clock.schedule_interval(self.on_timer_tick, 0.1)`).
+- Updates HUD and re-renders board.
+
+### 2. Final Timer Formula (`shared/engine/constants.py`)
+
+Standardize centralized timer formula:
+$$\text{Total Allowed Time (Seconds)} = \text{Total Number of Arrows}$$
+- 20 arrows = 20 seconds (`00:20`)
+- 50 arrows = 50 seconds (`00:50`)
+- 100 arrows = 100 seconds (`01:40`)
+- 150 arrows = 150 seconds (`02:30`)
+
+### 3. Advanced Level Tier (Levels 21–30) & Solvability Verification (`generate_levels.py`)
+
+Add Levels 21 through 30 with progressive grid matrix scaling:
+- **Level 21–22 (Hard)**: 10x10 grid, ~45–50 arrows.
+- **Level 23–24 (Hard+)**: 11x11 grid, ~55–65 arrows.
+- **Level 25–26 (Expert)**: 12x12 grid, ~75–85 arrows.
+- **Level 27–28 (Expert+)**: 13x13 grid, ~95–110 arrows.
+- **Level 29 (Extreme)**: 14x14 grid, ~125 arrows.
+- **Level 30 (Grand Master Escape)**: 14x14 grid, ~150 arrows.
+
+Every single level is verified using `HintSystem(engine).get_next_hint()` to ensure `solvable == True`.
+
+### 4. Dynamic Level Select & Summary (`android/ui/level_select.py`)
+
+- Update grid to display Levels 1 through 30.
+- Calculate summary stats dynamically:
+  - Max Stars: $30 \times 3 = 90 \text{ stars}$
+  - Level Count: $\text{completed\_count} / 30$
+- Progressive level locking: Level 1 is unlocked by default; Level N is unlocked when Level N-1 is completed.
+
+---
+
+## 🧪 Verification Plan (12 Automated Tests)
+
+Add tests to `tests/test_engine/test_gameplay_rules.py`:
+1. **TEST 1**: Open level -> timer starts on 1st move -> complete -> replay -> timer starts again.
+2. **TEST 2**: Replay same level 5 times -> exactly 1 timer callback scheduled per attempt.
+3. **TEST 3**: Complete -> Replay -> Complete -> Replay -> timer correctly resets every time.
+4. **TEST 4**: Pause -> Resume -> timer works smoothly.
+5. **TEST 5**: Pause -> Restart -> fresh timer works.
+6. **TEST 6**: Complete -> Replay -> Pause -> Resume -> timer works.
+7. **TEST 7**: Fail -> Retry -> timer works.
+8. **TEST 8**: For every level 1–30: `total_allowed_time == arrow_count`.
+9. **TEST 9**: Verify Levels 21–30 are solvable (`solvable == True`).
+10. **TEST 10**: Verify Level 20 completion unlocks Level 21.
+11. **TEST 11**: Verify Level 29 completion unlocks Level 30.
+12. **TEST 12**: Verify maximum available stars = $\text{number\_of\_levels} \times 3 = 90 \text{ stars}$.
+
+
+
+# Implementation Plan: Elite Level Pack (Levels 41–50 Elite Series)
+
+Implementation of **Levels 41 through 50** (Elite Series), introducing the **Golden Master Arrow** visual landmark mechanic, maintaining randomized arrow colors, zero facing pairs (`→ ←` deadlock prevention), and expanding Level Select to 50 levels (150 max stars).
+
+## ⚠️ Scope & Preservation Directives
+
+> [!IMPORTANT]
+> **Preservation Guarantee**:
+> - **Levels 1–40**: 100% UNTOUCHED and preserved.
+> - **Core Gameplay Rules**: No changes to Hearts (3 lives), Timer ($1\text{ arrow} = 1\text{s}$), Star formula, Coin rewards, Anti-farming policy, Pause/Resume, Replay, or Database architecture.
+> - **Deterministic Levels**: All levels 41–50 are pre-generated and stored in JSON files. No runtime layout randomization.
+
+---
+
+## 🚀 Key Features & Architectural Enhancements
+
+### 1. Golden Master Arrow (Levels 41–50 Feature)
+- **Concept**: Each level (41–50) contains **exactly ONE Golden Master Arrow** (`is_golden_master: true`, `theme: "gold"`).
+- **Appearance**: Distinctive gold background (`#ffd700`), soft glowing golden outline, and crisp high-contrast pointer chevron.
+- **Behavior**: Behaves **EXACTLY like regular arrows** (movement is governed strictly by arrow direction). It serves as a visual landmark near strategic/central locations.
+
+### 2. Mandatory Constraint: No Facing Pairs
+- Enforce `has_facing_pairs == False` during layout generation to prevent adjacent arrows pointing directly at each other (`→ ←` or `↑` over `↓`).
+
+### 3. Level Select Expansion to 50 Levels
+- Expand Level Select grid to 50 levels (5 columns x 10 rows).
+- Update summary header dynamically to $50 \times 3 = 150\text{ max stars}$.
+
+---
+
+## 📐 Level Pack Specifications (Levels 41–50 Elite Series)
+
+| Level | Name | Matrix Size | Target Arrows | Allowed Time | Golden Master Position | Difficulty Tier |
+| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| **Level 41** | Elite Crossroads | 15x15 | ~160 | 160s | (7, 7) | Elite |
+| **Level 42** | Vanguard Core | 15x15 | ~175 | 175s | (7, 8) | Elite+ |
+| **Level 43** | Iron Nexus | 16x16 | ~190 | 190s | (8, 8) | Master |
+| **Level 44** | Quantum Mesh | 16x16 | ~205 | 205s | (8, 7) | Master+ |
+| **Level 45** | Titan Citadel | 17x17 | ~220 | 220s | (8, 8) | Legend |
+| **Level 46** | Nebula Overlord | 17x17 | ~235 | 235s | (9, 8) | Legend+ |
+| **Level 47** | Omega Gauntlet | 18x18 | ~250 | 250s | (9, 9) | Nightmare |
+| **Level 48** | Eclipse Pinnacle | 18x18 | ~265 | 265s | (9, 10) | Nightmare+ |
+| **Level 49** | Apex Master | 18x18 | ~280 | 280s | (10, 9) | Ultimate |
+| **Level 50** | Final Elite Challenge | 18x18 | ~300 | 300s | (9, 9) | Final Elite Challenge |
+
+---
+
+## 🧪 Verification Plan
+
+1. **Generation & Solvability**:
+   - Run `python generate_levels.py` to generate levels 41–50 with verified solvability, zero facing pairs, and exactly one Golden Master Arrow per level.
+
+2. **Automated Unit Tests**:
+   - Update `tests/test_engine/test_gameplay_rules.py` and run `pytest` (all 35+ tests passing).
+
+3. **Metrics Table Report**:
+   - Output full report: Level number, Matrix dimensions, Arrow count, Timer duration, Golden Master Arrow position, Solvability status, Facing pairs status.
+
+
+# Multi-Platform Online Architecture & Implementation Roadmap: Arrow Escape
+
+A comprehensive architectural blueprint and multi-phase implementation roadmap to transform **Arrow Escape** into a public, cross-platform online game with cloud save, unified player accounts, REST APIs, and multi-platform deployment (Web, Android, Desktop).
+
+---
+
+## 🏛️ 1. Architecture Review & Module Classification
+
+### A. Immutable Core Modules (100% Preserved)
+The shared Python game engine remains the single source of truth:
+- **Game Engine & Rules**: `shared/engine/` (`engine.py`, `board.py`, `models.py`, `solver.py`, `constants.py`, `events.py`).
+- **Level Definitions**: `levels/level001.json` through `level050.json` (Grid sizes, arrow placement, Color Confusion Mode, Black Master Arrow markers).
+- **Core Mechanics**: 3 Hearts/Lives system, Timer ($1\text{s/arrow}$), Star thresholds ($50\%, 70\%, 80\%$), Coin rewards ($100\%, 70\%, 50\%$), Anti-farming incremental rewards, Replay, Pause/Resume, Undo, and Hint System.
+
+### B. Modules To Be Expanded / Transformed
+- **Backend (`backend/`)**: FastAPI REST API v1 endpoints for Auth, Players, Cloud Save, Sync, Leaderboards, Stats, Achievements, Admin Dashboard.
+- **Database (`database/` & `backend/app/models/`)**: Production PostgreSQL schema with SQLAlchemy ORM models and Alembic migrations.
+- **Frontend (`frontend/`)**: Modern responsive web application (HTML5 Canvas + CSS/JS UI) supporting Web Browser, Capacitor (Android APK/AAB), and Electron (Desktop Windows/Mac/Linux).
+- **Authentication**: JWT + Refresh tokens, Guest, Email/Password, Google OAuth, Apple OAuth ready.
+
+---
+
+## 📐 2. Systems Architecture Blueprint
+
+```mermaid
+flowchart TD
+    subgraph Clients["Cross-Platform Clients"]
+        Web["🌐 Web Browser\n(arrowescape.com)"]
+        Android["📱 Android App\n(Capacitor APK / AAB)"]
+        Desktop["💻 Desktop App\n(Electron Win/Mac/Linux)"]
+    end
+
+    subgraph FrontendApp["Unified Frontend (HTML5 Canvas + Responsive UI)"]
+        UI["Screens: Menu, Level Select, Game, Profile, Leaderboard, Admin"]
+        EngineClient["Web Game Engine + Offline Queue"]
+        AuthClient["Auth & Cloud Sync Manager"]
+    end
+
+    subgraph BackendAPI["FastAPI REST API v1 Engine"]
+        AuthService["Auth Router (JWT, Guest, OAuth)"]
+        SyncService["Cloud Save & Sync Router"]
+        LeaderboardService["Leaderboard & Stats Router"]
+        AdminService["Admin Panel Router"]
+    end
+
+    subgraph DatabaseLayer["PostgreSQL Production DB"]
+        UsersDB[("Users & Profiles")]
+        ProgressDB[("Level Progress & Cloud Saves")]
+        StatsDB[("Leaderboards & Player Stats")]
+        AdminDB[("Admin Logs & Notifications")]
+    end
+
+    Web --> UI
+    Android --> UI
+    Desktop --> UI
+
+    UI --> EngineClient
+    UI --> AuthClient
+
+    AuthClient <-->|HTTPS REST API / JSON| AuthService
+    AuthClient <-->|Cloud Save / Delta Sync| SyncService
+    AuthClient <-->|Rankings & Stats| LeaderboardService
+    AuthClient <-->|Admin Control| AdminService
+
+    AuthService --> UsersDB
+    SyncService --> ProgressDB
+    LeaderboardService --> StatsDB
+    AdminService --> AdminDB
+```
+
+---
+
+## 🗄️ 3. Database Schema Design (PostgreSQL)
+
+- **`users`**: `id` (UUID), `email`, `hashed_password`, `username`, `display_name`, `avatar_url`, `country`, `language`, `is_guest`, `is_active`, `is_admin`, `created_at`, `last_login_at`.
+- **`user_settings`**: `user_id`, `theme`, `sound_enabled`, `sfx_volume`, `music_volume`, `color_tutorial_dismissed`, `updated_at`.
+- **`user_progress`**: `id`, `user_id`, `level_id`, `stars`, `moves`, `best_time_seconds`, `coins_claimed`, `completed`, `updated_at`.
+- **`user_stats`**: `user_id`, `total_coins`, `total_stars`, `current_level`, `highest_unlocked_level`, `games_played`, `levels_completed`, `perfect_levels`, `current_streak`, `highest_streak`, `total_play_time_seconds`, `hints_used`, `replay_count`, `updated_at`.
+- **`achievements`** & **`user_achievements`**: `user_id`, `achievement_id`, `unlocked_at`.
+- **`refresh_tokens`**: `id`, `user_id`, `token_hash`, `expires_at`, `revoked`, `created_at`.
+- **`leaderboards`**: Cached weekly/monthly/all-time snapshots.
+- **`admin_logs`** & **`notifications`**: System audit trails and broadcast/user notifications.
+
+---
+
+## 🗺️ 4. Multi-Phase Implementation Roadmap
+
+### Phase 1: Production FastAPI Backend & PostgreSQL Integration
+- Implement SQLAlchemy ORM models for Users, Profiles, Progress, Stats, Achievements, Refresh Tokens, Leaderboards, Admin.
+- Build production auth endpoints (`/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/auth/guest`, `/api/v1/auth/refresh`, `/api/v1/auth/google`, `/api/v1/auth/password-reset`).
+- Build Cloud Save & Sync endpoints (`/api/v1/progress/sync`, `/api/v1/users/me`, `/api/v1/stats`, `/api/v1/leaderboard`).
+- Add Alembic migration scripts and seed initial data.
+
+### Phase 2: Web Frontend UI Expansion & Cloud Sync Engine
+- Expand `frontend/` UI: Auth modals (Login, Register, Guest, Forgot Password), Profile Screen, Cloud Sync indicator, Leaderboards Screen, Admin Panel UI.
+- Implement `OfflineQueueManager` in frontend JS for offline gameplay with automatic sync upon reconnection.
+- Connect Web Canvas game loop to FastAPI endpoints for automatic progress saving.
+
+### Phase 3: Android Build Configuration (Capacitor wrapper)
+- Configure `@capacitor/core` and `@capacitor/android`.
+- Set up Android App Bundle (`.aab`) and signed `.apk` build scripts in `android/`.
+- Configure adaptive app icons, splash screens, and permissions for Google Play Store readiness.
+
+### Phase 4: Desktop Build Packaging (Electron wrapper)
+- Configure Electron wrapper around the web application for Windows (`.exe`), macOS (`.dmg`), and Linux (`.AppImage`).
+- Ensure responsive scaling across 4K, 1080p, laptop, and windowed modes.
+
+### Phase 5: Admin Panel, Security, Dockerization & Deployment Setup
+- Build Admin Dashboard for account management, level publishing, reports, and player bans.
+- Dockerize backend (`Dockerfile`, `docker-compose.yml`) for Render/Railway/DigitalOcean/AWS deployment.
+- Configure production CORS, rate limiting, security headers, and domain configs (`arrowescape.com`).
+- Run automated test suite (`pytest`) verifying 100% backend API coverage and cloud sync.
+
+---
+
+## 🧪 Verification Plan
+
+1. **Backend Integration Tests**:
+   - Test user registration, guest login, token refresh, cloud save sync, leaderboards, and admin endpoints with `pytest`.
+2. **Cross-Platform Cloud Sync Tests**:
+   - Verify completing Level 42 on one client updates progress, coins, and stars seamlessly on another client upon login.
+3. **Build Output Verification**:
+   - Verify web build artifacts, signed Android APK/AAB setup, and Electron desktop launcher scripts.

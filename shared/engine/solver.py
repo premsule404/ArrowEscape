@@ -26,22 +26,24 @@ class HintSystem:
         if len(board.arrows) == 0:
             return []
             
-        # Create a state signature (just the set of remaining arrow IDs)
         state_sig = frozenset(board.arrows.keys())
         if state_sig in visited_states:
             return None
         visited_states.add(state_sig)
         
         temp_engine = GameEngine()
+        temp_engine.board = board
         
-        for arrow_id, arrow in board.arrows.items():
-            temp_engine.board = board
-            if temp_engine.can_move(arrow):
-                next_board = board.clone()
-                next_board.remove_arrow(arrow_id)
+        movable = [aid for aid, arrow in board.arrows.items() if temp_engine.can_move(arrow)]
+        if not movable:
+            return None
+            
+        for arrow_id in movable:
+            next_board = board.clone()
+            next_board.remove_arrow(arrow_id)
+            
+            path = self._solve(next_board, visited_states)
+            if path is not None:
+                return [arrow_id] + path
                 
-                path = self._solve(next_board, visited_states)
-                if path is not None:
-                    return [arrow_id] + path
-                    
         return None
