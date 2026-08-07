@@ -1,6 +1,7 @@
 import { loader } from '../engine/pyodide_loader.js';
 import { api } from '../api/client.js';
 import { showVictoryCelebration, showGameOver, hideGameOver, hideVictory, showPauseModal, hidePauseModal, updateHUD } from '../ui/screens.js';
+import { cloudSave } from '../services/cloud_save.js';
 
 export class GameLoop {
     constructor(canvasId) {
@@ -60,13 +61,17 @@ export class GameLoop {
             showGameOver(title, msg);
         });
         
-        loader.engine.events.add_listener("on_win", (data) => {
+        loader.engine.events.add_listener("on_win", async (data) => {
             this.stop();
-            const stars = loader.engine.stars_earned;
-            const coins = loader.engine.coins_earned;
-            const levelName = document.getElementById('level-title') ? document.getElementById('level-title').innerText : "Level 1";
+            const stars = loader.engine.stars_earned || 0;
+            const coins = loader.engine.coins_earned || 0;
+            const moves = loader.engine.moves_count || 0;
+            const time = loader.engine.elapsed_time || 0;
+            const levelNum = loader.engine.level_num || 1;
+            const levelName = document.getElementById('level-title') ? document.getElementById('level-title').innerText : `Level ${levelNum}`;
             
-            showVictoryCelebration(levelName, stars, coins);
+            showVictoryCelebration(levelName, stars, coins, time);
+            await cloudSave.saveLevelCompletion(levelNum, stars, moves, time, coins);
         });
     }
 

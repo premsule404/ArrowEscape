@@ -4,6 +4,7 @@ import { hideLoading, hideVictory, hidePauseModal, setLevelTitle, updateLoadingP
 import { LevelSelectScreen } from './ui/level_select_screen.js';
 import { AuthScreens } from './ui/auth_screens.js';
 import { api } from './api/client.js';
+import { cloudSave } from './services/cloud_save.js';
 
 let currentLevelIndex = 1;
 let gameLoop = null;
@@ -39,8 +40,12 @@ async function init() {
         updateLoadingProgress(5, "Checking Backend Health...");
         await checkBackendStatus();
 
-        authScreens = new AuthScreens((res) => {
+        updateLoadingProgress(15, "Downloading Cloud Save...");
+        await cloudSave.downloadCloudProgress();
+
+        authScreens = new AuthScreens(async (res) => {
             console.log("Authenticated successfully:", res);
+            await cloudSave.downloadCloudProgress();
         });
         
         const btnOpenLogin = document.getElementById('btn-open-login');
@@ -72,8 +77,9 @@ async function init() {
             loadLevelByIndex(selectedLvl);
         });
         
-        updateLoadingProgress(90, "Loading Level 1 Layout...");
-        await loadLevelByIndex(1);
+        const startLvl = cloudSave.localSave.current_level || 1;
+        updateLoadingProgress(90, `Loading Level ${startLvl} Layout...`);
+        await loadLevelByIndex(startLvl);
         
         updateLoadingProgress(100, "Starting Game...");
         setTimeout(() => hideLoading(), 250);
@@ -103,7 +109,7 @@ const btnLevelNav = document.getElementById('btn-level-select-nav');
 if (btnLevelNav) {
     btnLevelNav.onclick = () => {
         if (levelSelectScreen) {
-            levelSelectScreen.show(50, 50);
+            levelSelectScreen.show(50, cloudSave.localSave.current_level || 1, cloudSave.localSave.completed_levels || {});
         }
     };
 }
@@ -134,7 +140,7 @@ if (btnExitModal) {
     btnExitModal.onclick = () => {
         hidePauseModal();
         if (levelSelectScreen) {
-            levelSelectScreen.show(50, 50);
+            levelSelectScreen.show(50, cloudSave.localSave.current_level || 1, cloudSave.localSave.completed_levels || {});
         }
     };
 }
@@ -178,7 +184,7 @@ if (btnSelectCelebration) {
     btnSelectCelebration.onclick = () => {
         hideVictory();
         if (levelSelectScreen) {
-            levelSelectScreen.show(50, 50);
+            levelSelectScreen.show(50, cloudSave.localSave.current_level || 1, cloudSave.localSave.completed_levels || {});
         }
     };
 }
