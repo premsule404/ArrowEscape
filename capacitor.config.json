@@ -1,5 +1,5 @@
 {
-  "appId": "com.arrowescape.game",
+  "appId": "com.arrowescape.app",
   "appName": "Arrow Escape",
   "webDir": "frontend",
   "bundledWebRuntime": false,
@@ -9,6 +9,17 @@
   "android": {
     "allowMixedContent": true,
     "captureInput": true,
-    "webContentsDebuggingEnabled": true
+    "webContentsDebuggingEnabled": true,
+    "backgroundColor": "#121826"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "backgroundColor": "#121826",
+      "androidSplashResourceName": "splash",
+      "splashFullScreen": true,
+      "splashImmersive": true
+    }
   }
 }
