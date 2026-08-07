@@ -130,9 +130,15 @@ export class CloudSaveManager {
                 }
                 this.localSave.last_synced_at = new Date().toISOString();
                 this.saveLocalSave();
+                if (window.notificationSystem) {
+                    window.notificationSystem.notify("Cloud Sync Complete", "Your game progress is backed up.", "cloud", "☁️");
+                }
             }
         } catch (e) {
             console.warn("Cloud sync deferred:", e.message);
+            if (window.notificationSystem) {
+                window.notificationSystem.notify("Sync Error", e.message || "Failed to sync cloud save.", "error", "⚠️");
+            }
         }
         return this.localSave;
     }

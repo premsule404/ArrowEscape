@@ -8,6 +8,7 @@ import { AchievementsScreen } from './ui/achievements_screen.js';
 import { DailyRewardsScreen } from './ui/daily_rewards_screen.js';
 import { ShopScreen } from './ui/shop_screen.js';
 import { FriendsScreen } from './ui/friends_screen.js';
+import { NotificationSystem } from './ui/notifications_screen.js';
 import { api } from './api/client.js';
 import { cloudSave } from './services/cloud_save.js';
 
@@ -20,6 +21,7 @@ export let achievementsScreen = null;
 let dailyRewardsScreen = null;
 let shopScreen = null;
 let friendsScreen = null;
+export let notificationSystem = null;
 
 async function checkBackendStatus() {
     try {
@@ -33,6 +35,9 @@ async function checkBackendStatus() {
         console.warn("Backend API unavailable, using Offline Mode:", e.message);
     }
     showOfflineMode();
+    if (notificationSystem) {
+        notificationSystem.notify("Offline Mode Active", "Backend unavailable. Progress saved locally.", "offline", "📶");
+    }
     return false;
 }
 
@@ -47,6 +52,8 @@ async function loadLevelByIndex(idx) {
 
 async function init() {
     try {
+        notificationSystem = new NotificationSystem();
+
         updateLoadingProgress(5, "Checking Backend Health...");
         await checkBackendStatus();
 
@@ -56,6 +63,7 @@ async function init() {
         authScreens = new AuthScreens(async (res) => {
             console.log("Authenticated successfully:", res);
             await cloudSave.downloadCloudProgress();
+            notificationSystem.notify("Welcome Back!", `Logged in as ${res.user?.username || 'Player'}`, "system", "👤");
         });
 
         leaderboardScreen = new LeaderboardScreen();

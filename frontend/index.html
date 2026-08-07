@@ -47,6 +47,9 @@
                     <button id="btn-daily-rewards" class="icon-btn" aria-label="Daily Rewards" title="Daily Rewards (D)">🎁</button>
                     <button id="btn-shop" class="icon-btn" aria-label="Open Shop" title="Shop (S)">🛒</button>
                     <button id="btn-friends" class="icon-btn" aria-label="Friends & Social" title="Friends (F)">👥</button>
+                    <button id="btn-notifications" class="icon-btn notif-bell-btn" aria-label="Notifications" title="Notifications (N)">
+                        🔔<span id="notif-badge" class="notif-badge-count hidden">0</span>
+                    </button>
                     <button id="btn-open-login" class="icon-btn" aria-label="Account Login" title="Player Account">👤</button>
                 </div>
                 <h1 id="level-title" tabindex="0">Level 1 <span id="offline-badge" class="offline-badge hidden" title="Running in Offline Mode">Offline Mode</span></h1>
@@ -337,6 +340,36 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Notification Center Modal -->
+    <div id="notifications-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="notifications-title">
+        <div class="modal-content notifications-modal-content">
+            <div class="levelselect-header">
+                <div>
+                    <h2 id="notifications-title">Notifications 🔔</h2>
+                    <div class="notif-header-actions">
+                        <button id="btn-mark-all-read" class="secondary-btn notif-action-btn">✓ Mark All Read</button>
+                        <button id="btn-clear-notifications" class="danger-btn notif-action-btn">🗑️ Clear All</button>
+                    </div>
+                </div>
+                <button id="btn-close-notifications" class="icon-btn close-btn auth-close-btn" aria-label="Close Notifications">✕</button>
+            </div>
+
+            <div id="notifications-tabs" class="tab-group notif-tabs">
+                <button class="tab-btn active" data-filter="all">All</button>
+                <button class="tab-btn" data-filter="unread">Unread</button>
+            </div>
+
+            <div id="notifications-list" class="notifications-list">
+                <!-- Notification items populated dynamically by NotificationSystem JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Toast Notification Stack -->
+    <div id="toast-stack" class="toast-stack">
+        <!-- Animated toast banners injected dynamically by JS -->
     </div>
 
     <!-- Login Modal -->

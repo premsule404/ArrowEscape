@@ -295,6 +295,29 @@ export class ApiClient {
         return this.request(`/friends/profile/${userId}`);
     }
 
+    // --- Notifications ---
+    async getNotifications(unreadOnly = false) {
+        return this.request(`/notifications?unread_only=${unreadOnly}`);
+    }
+
+    async markNotificationRead(notificationId) {
+        return this.request(`/notifications/read/${notificationId}`, {
+            method: "PUT"
+        });
+    }
+
+    async markAllNotificationsRead() {
+        return this.request("/notifications/read-all", {
+            method: "PUT"
+        });
+    }
+
+    async clearNotifications() {
+        return this.request("/notifications/clear", {
+            method: "DELETE"
+        });
+    }
+
     // --- Leaderboard & Profile ---
     async getLeaderboard(category = "stars", scope = "global", timeframe = "all_time") {
         return this.request(`/leaderboard?category=${category}&scope=${scope}&timeframe=${timeframe}`);
