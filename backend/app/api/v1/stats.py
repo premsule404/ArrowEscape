@@ -28,9 +28,9 @@ def get_user_statistics(user: User = Depends(require_current_user), db: Session 
     avg_moves = round(total_moves / len(completed_levels), 1) if completed_levels else 0.0
     
     best_time = min((l.best_time for l in completed_levels if l.best_time > 0), default=0.0)
-    best_score = summary.best_score if summary else 0
     total_coins = summary.total_coins if summary else 0
     total_stars = summary.total_stars if summary else 0
+    best_score = getattr(summary, 'best_score', total_stars * 100)
     
     boosters_used = stats_obj.total_undos if stats_obj else 0
     hints_used = stats_obj.total_hints_used if stats_obj else 0
