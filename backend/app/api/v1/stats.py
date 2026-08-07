@@ -9,6 +9,8 @@ from ...models.game import LevelProgress
 from ...models.stats import Statistics
 from ...api.v1.auth import require_current_user
 
+from ...schemas.stats import PlayerStatsUpdateSchema
+
 router = APIRouter()
 
 @router.get('', response_model=Dict[str, Any])
@@ -79,7 +81,7 @@ def get_user_statistics(user: User = Depends(require_current_user), db: Session 
     }
 
 @router.patch('', response_model=dict)
-def update_stats(data: Any, user: User = Depends(require_current_user), db: Session = Depends(get_db)):
+def update_stats(data: PlayerStatsUpdateSchema, user: User = Depends(require_current_user), db: Session = Depends(get_db)):
     summary = db.query(UserProgressSummary).filter(UserProgressSummary.user_id == user.id).first()
     if not summary:
         summary = UserProgressSummary(user_id=user.id)
