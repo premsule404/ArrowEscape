@@ -1,8 +1,9 @@
-import { loader } from './engine/pyodide_loader.js';
+import { setLevelTitle, updateLoadingProgress, hideLoading, showOfflineMode, hideOfflineMode, hidePauseModal, hideVictory } from './ui/screens.js';
 import { GameLoop } from './core/game_loop.js';
-import { hideLoading, hideVictory, hidePauseModal, setLevelTitle, updateLoadingProgress, showOfflineMode, hideOfflineMode } from './ui/screens.js';
+import { loader } from './engine/pyodide_loader.js';
 import { LevelSelectScreen } from './ui/level_select_screen.js';
 import { AuthScreens } from './ui/auth_screens.js';
+import { LeaderboardScreen } from './ui/leaderboard_screen.js';
 import { api } from './api/client.js';
 import { cloudSave } from './services/cloud_save.js';
 
@@ -10,6 +11,7 @@ let currentLevelIndex = 1;
 let gameLoop = null;
 let levelSelectScreen = null;
 let authScreens = null;
+let leaderboardScreen = null;
 
 async function checkBackendStatus() {
     try {
@@ -47,6 +49,8 @@ async function init() {
             console.log("Authenticated successfully:", res);
             await cloudSave.downloadCloudProgress();
         });
+
+        leaderboardScreen = new LeaderboardScreen();
         
         const btnOpenLogin = document.getElementById('btn-open-login');
         if (btnOpenLogin) {
@@ -56,6 +60,15 @@ async function init() {
                     authScreens.showProfile(userData);
                 } catch (e) {
                     authScreens.showLogin();
+                }
+            };
+        }
+
+        const btnLeaderboard = document.getElementById('btn-leaderboard');
+        if (btnLeaderboard) {
+            btnLeaderboard.onclick = () => {
+                if (leaderboardScreen) {
+                    leaderboardScreen.show();
                 }
             };
         }

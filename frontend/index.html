@@ -42,6 +42,7 @@
                 <div class="left-controls">
                     <button id="btn-pause" class="icon-btn" aria-label="Pause Game" title="Pause Game (P)">⏸</button>
                     <button id="btn-level-select-nav" class="icon-btn" aria-label="Open Level Select" title="Select Level">🗺️</button>
+                    <button id="btn-leaderboard" class="icon-btn" aria-label="Open Leaderboard" title="Leaderboard (L)">🏆</button>
                     <button id="btn-open-login" class="icon-btn" aria-label="Account Login" title="Player Account">👤</button>
                 </div>
                 <h1 id="level-title" tabindex="0">Level 1 <span id="offline-badge" class="offline-badge hidden" title="Running in Offline Mode">Offline Mode</span></h1>
@@ -121,6 +122,60 @@
             </div>
             <div id="level-grid" class="level-grid" role="list">
                 <!-- Level cards rendered dynamically by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="leaderboard-title">
+        <div class="modal-content leaderboard-modal-content">
+            <div class="levelselect-header">
+                <h2 id="leaderboard-title">Leaderboard 🏆</h2>
+                <button id="btn-close-leaderboard" class="icon-btn close-btn auth-close-btn" aria-label="Close Leaderboard">✕</button>
+            </div>
+            
+            <div class="leaderboard-tabs-container">
+                <!-- Scope Tabs -->
+                <div class="tab-group" id="scope-tabs">
+                    <button class="tab-btn active" data-scope="global">🌍 Global</button>
+                    <button class="tab-btn" data-scope="country">🚩 Country</button>
+                    <button class="tab-btn" data-scope="friends">👥 Friends</button>
+                </div>
+
+                <!-- Timeframe Tabs -->
+                <div class="tab-group" id="timeframe-tabs">
+                    <button class="tab-btn active" data-timeframe="all_time">🏆 All Time</button>
+                    <button class="tab-btn" data-timeframe="monthly">📅 Monthly</button>
+                    <button class="tab-btn" data-timeframe="weekly">⚡ Weekly</button>
+                </div>
+                
+                <!-- Category Tabs -->
+                <div class="tab-group" id="category-tabs">
+                    <button class="tab-btn active" data-category="stars">⭐ Stars</button>
+                    <button class="tab-btn" data-category="coins">💰 Coins</button>
+                    <button class="tab-btn" data-category="levels">🗺️ Levels</button>
+                </div>
+            </div>
+
+            <div class="leaderboard-body">
+                <div class="leaderboard-table-container">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Player</th>
+                                <th>Stars</th>
+                                <th>Coins</th>
+                                <th>Levels</th>
+                                <th>Done %</th>
+                                <th>Best Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-list">
+                            <!-- Rows populated dynamically by LeaderboardScreen JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

@@ -200,8 +200,8 @@ export class ApiClient {
     }
 
     // --- Leaderboard & Profile ---
-    async getLeaderboard(category = "stars") {
-        return this.request(`/leaderboard?category=${category}`);
+    async getLeaderboard(category = "stars", scope = "global", timeframe = "all_time") {
+        return this.request(`/leaderboard?category=${category}&scope=${scope}&timeframe=${timeframe}`);
     }
 
     async updateSettings(settingsData) {

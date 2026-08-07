@@ -27,6 +27,19 @@ def require_current_user(authorization: Optional[str] = Header(None), db: Sessio
         raise HTTPException(status_code=401, detail="User not found.")
     return user
 
+def get_current_user_optional(authorization: Optional[str] = Header(None), db: Session = Depends(get_db)) -> Optional[User]:
+    if not authorization or not authorization.startswith("Bearer "):
+        return None
+    try:
+        token = authorization.split(" ")[1]
+        payload = decode_access_token(token)
+        if not payload or "sub" not in payload:
+            return None
+        user_id = int(payload["sub"])
+        return db.query(User).filter(User.id == user_id).first()
+    except Exception:
+        return None
+
 @router.post('/guest', response_model=TokenResponseSchema)
 def guest_login(req: GuestLoginRequestSchema, db: Session = Depends(get_db)):
     service = AuthService(db)
