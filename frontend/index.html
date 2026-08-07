@@ -50,6 +50,7 @@
                     <button id="btn-notifications" class="icon-btn notif-bell-btn" aria-label="Notifications" title="Notifications (N)">
                         🔔<span id="notif-badge" class="notif-badge-count hidden">0</span>
                     </button>
+                    <button id="btn-stats" class="icon-btn" aria-label="Statistics Dashboard" title="Statistics (T)">📊</button>
                     <button id="btn-open-login" class="icon-btn" aria-label="Account Login" title="Player Account">👤</button>
                 </div>
                 <h1 id="level-title" tabindex="0">Level 1 <span id="offline-badge" class="offline-badge hidden" title="Running in Offline Mode">Offline Mode</span></h1>
@@ -370,6 +371,39 @@
     <!-- Floating Toast Notification Stack -->
     <div id="toast-stack" class="toast-stack">
         <!-- Animated toast banners injected dynamically by JS -->
+    </div>
+
+    <!-- Statistics Dashboard Modal -->
+    <div id="stats-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+        <div class="modal-content stats-modal-content">
+            <div class="levelselect-header">
+                <div>
+                    <h2 id="stats-title">Player Statistics 📊</h2>
+                    <span class="stats-subtitle">Performance Analytics & Activity Summary</span>
+                </div>
+                <button id="btn-close-stats" class="icon-btn close-btn auth-close-btn" aria-label="Close Statistics">✕</button>
+            </div>
+
+            <div id="stats-metrics-grid" class="profile-stats-grid stats-metrics-grid">
+                <!-- 12 Stat Cards populated dynamically by StatsDashboardScreen JS -->
+            </div>
+
+            <div class="stats-charts-row">
+                <div class="chart-box">
+                    <h4>Daily Activity (Last 7 Days) 📅</h4>
+                    <div id="stats-daily-chart" class="stats-chart-container">
+                        <!-- Daily bar chart populated dynamically by JS -->
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h4>Weekly Activity (Monthly Trend) 📈</h4>
+                    <div id="stats-weekly-chart" class="stats-chart-container">
+                        <!-- Weekly progress bars populated dynamically by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Login Modal -->

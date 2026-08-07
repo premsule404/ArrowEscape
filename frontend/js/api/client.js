@@ -318,6 +318,11 @@ export class ApiClient {
         });
     }
 
+    // --- Statistics ---
+    async getStatistics() {
+        return this.request("/stats");
+    }
+
     // --- Leaderboard & Profile ---
     async getLeaderboard(category = "stars", scope = "global", timeframe = "all_time") {
         return this.request(`/leaderboard?category=${category}&scope=${scope}&timeframe=${timeframe}`);
