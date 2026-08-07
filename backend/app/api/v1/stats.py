@@ -77,3 +77,16 @@ def get_user_statistics(user: User = Depends(require_current_user), db: Session 
         "daily_activity": daily_activity,
         "weekly_activity": weekly_activity
     }
+
+@router.patch('', response_model=dict)
+def update_stats(data: Any, user: User = Depends(require_current_user), db: Session = Depends(get_db)):
+    summary = db.query(UserProgressSummary).filter(UserProgressSummary.user_id == user.id).first()
+    if not summary:
+        summary = UserProgressSummary(user_id=user.id)
+        db.add(summary)
+    
+    if hasattr(data, 'games_played') and data.games_played is not None:
+        summary.games_played = data.games_played
+        
+    db.commit()
+    return {"success": True, "user_id": user.id}
