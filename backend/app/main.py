@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import HTTPException, RequestValidationError
-from .api.v1 import health, auth, users, game, levels, progress, achievements, coins, themes, leaderboard, daily, shop, stats, notifications, admin, cloud, profile, settings, inventory, transactions, sync_queue
+from .api.v1 import health, auth, users, game, levels, progress, achievements, coins, themes, leaderboard, daily, shop, friends, stats, notifications, admin, cloud, profile, settings, inventory, transactions, sync_queue
 
 from fastapi.middleware.gzip import GZipMiddleware
 
