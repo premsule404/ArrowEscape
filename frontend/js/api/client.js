@@ -199,6 +199,25 @@ export class ApiClient {
         return this.request("/progress");
     }
 
+    // --- Achievements ---
+    async getAchievements() {
+        return this.request("/achievements");
+    }
+
+    async claimAchievement(achievementId) {
+        return this.request("/achievements/claim", {
+            method: "POST",
+            body: JSON.stringify({ achievement_id: achievementId })
+        });
+    }
+
+    async syncAchievements(achievementsList) {
+        return this.request("/achievements/sync", {
+            method: "POST",
+            body: JSON.stringify({ achievements: achievementsList })
+        });
+    }
+
     // --- Leaderboard & Profile ---
     async getLeaderboard(category = "stars", scope = "global", timeframe = "all_time") {
         return this.request(`/leaderboard?category=${category}&scope=${scope}&timeframe=${timeframe}`);

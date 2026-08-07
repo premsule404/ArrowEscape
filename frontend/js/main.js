@@ -4,6 +4,7 @@ import { loader } from './engine/pyodide_loader.js';
 import { LevelSelectScreen } from './ui/level_select_screen.js';
 import { AuthScreens } from './ui/auth_screens.js';
 import { LeaderboardScreen } from './ui/leaderboard_screen.js';
+import { AchievementsScreen } from './ui/achievements_screen.js';
 import { api } from './api/client.js';
 import { cloudSave } from './services/cloud_save.js';
 
@@ -12,6 +13,7 @@ let gameLoop = null;
 let levelSelectScreen = null;
 let authScreens = null;
 let leaderboardScreen = null;
+export let achievementsScreen = null;
 
 async function checkBackendStatus() {
     try {
@@ -51,6 +53,7 @@ async function init() {
         });
 
         leaderboardScreen = new LeaderboardScreen();
+        achievementsScreen = new AchievementsScreen();
         
         const btnOpenLogin = document.getElementById('btn-open-login');
         if (btnOpenLogin) {
@@ -69,6 +72,15 @@ async function init() {
             btnLeaderboard.onclick = () => {
                 if (leaderboardScreen) {
                     leaderboardScreen.show();
+                }
+            };
+        }
+
+        const btnAchievements = document.getElementById('btn-achievements');
+        if (btnAchievements) {
+            btnAchievements.onclick = () => {
+                if (achievementsScreen) {
+                    achievementsScreen.show();
                 }
             };
         }

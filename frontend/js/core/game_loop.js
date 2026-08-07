@@ -2,6 +2,7 @@ import { loader } from '../engine/pyodide_loader.js';
 import { api } from '../api/client.js';
 import { showVictoryCelebration, showGameOver, hideGameOver, hideVictory, showPauseModal, hidePauseModal, updateHUD } from '../ui/screens.js';
 import { cloudSave } from '../services/cloud_save.js';
+import { achievementsScreen } from '../main.js';
 
 export class GameLoop {
     constructor(canvasId) {
@@ -72,6 +73,9 @@ export class GameLoop {
             
             showVictoryCelebration(levelName, stars, coins, time);
             await cloudSave.saveLevelCompletion(levelNum, stars, moves, time, coins);
+            if (achievementsScreen) {
+                await achievementsScreen.checkAndTriggerUnlocks(levelNum, stars, moves, time);
+            }
         });
     }
 
