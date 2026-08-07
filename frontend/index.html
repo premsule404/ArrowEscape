@@ -75,42 +75,149 @@
     </script>
 </head>
 <body>
+    <!-- Splash / Loader -->
     <div id="loading" class="overlay active" role="status" aria-label="Loading Game">
-        <div class="loader"></div>
-        <p id="loading-text">Initializing Pyodide WASM...</p>
-        <div class="loading-bar-container">
-            <div id="loading-progress-bar" class="loading-bar-fill" style="width: 10%;"></div>
+        <div class="loader-content">
+            <span class="loader-logo-icon">🏹</span>
+            <h2 class="loader-title">ARROW ESCAPE</h2>
+            <div class="loader"></div>
+            <p id="loading-text">Initializing Pyodide WASM Engine...</p>
+            <div class="loading-bar-container">
+                <div id="loading-progress-bar" class="loading-bar-fill" style="width: 10%;"></div>
+            </div>
+            <span id="loading-percentage" class="loading-percentage-text">10%</span>
         </div>
-        <span id="loading-percentage" class="loading-percentage-text">10%</span>
     </div>
 
-    <div class="game-container">
-        <!-- Responsive 2-Tier Top Header -->
+    <!-- PAGE 1: Welcome / Login Screen -->
+    <div id="welcome-screen" class="screen welcome-screen hidden">
+        <div class="welcome-card glass-panel">
+            <div class="game-logo-large">
+                <span class="logo-icon">🏹</span>
+                <h1 class="logo-title">ARROW ESCAPE</h1>
+                <span class="logo-subtitle">Free Every Arrow. Master Every Puzzle.</span>
+            </div>
+            <div class="welcome-actions">
+                <button id="welcome-btn-login" class="menu-btn primary-menu-btn">🔑 LOGIN</button>
+                <button id="welcome-btn-register" class="menu-btn secondary-menu-btn">✨ REGISTER</button>
+                <button id="welcome-btn-guest" class="menu-btn accent-menu-btn">🎮 CONTINUE AS GUEST</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: Main Menu Screen -->
+    <div id="main-menu-screen" class="screen main-menu-screen hidden">
+        <div class="main-menu-container">
+            <div class="main-menu-header">
+                <div class="game-logo-medium">
+                    <span class="logo-icon-sm">🏹</span>
+                    <h1 class="menu-game-title">ARROW ESCAPE</h1>
+                </div>
+
+                <!-- Player Information Card -->
+                <div class="player-info-card glass-panel">
+                    <div class="player-card-left">
+                        <div id="mm-avatar" class="player-avatar">🎯</div>
+                        <div class="player-details">
+                            <h3 id="mm-username">Player Name</h3>
+                            <span id="mm-sync-status" class="sync-status-badge synced">🟢 Cloud Synced</span>
+                        </div>
+                    </div>
+                    <div class="player-card-right">
+                        <div class="mini-stat-badge">💰 <span id="mm-coins">0</span></div>
+                        <div class="mini-stat-badge">⭐ <span id="mm-stars">0</span></div>
+                        <div class="mini-stat-badge">🗺️ Level <span id="mm-cur-level">1</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responsive Main Menu Buttons Grid -->
+            <div class="main-menu-grid">
+                <button id="mm-btn-play" class="grid-btn btn-play-large">
+                    <span class="btn-icon">▶</span>
+                    <div class="btn-text-wrap">
+                        <span class="btn-label">PLAY</span>
+                        <span class="btn-subtext">Level <span id="mm-play-level">1</span></span>
+                    </div>
+                </button>
+                
+                <button id="mm-btn-level-select" class="grid-btn">
+                    <span class="btn-icon">🗺️</span>
+                    <span class="btn-label">Select Level</span>
+                </button>
+                
+                <button id="mm-btn-leaderboard" class="grid-btn">
+                    <span class="btn-icon">🏆</span>
+                    <span class="btn-label">Leaderboard</span>
+                </button>
+
+                <button id="mm-btn-achievements" class="grid-btn">
+                    <span class="btn-icon">🎯</span>
+                    <span class="btn-label">Achievements</span>
+                </button>
+
+                <button id="mm-btn-daily" class="grid-btn">
+                    <span class="btn-icon">🎁</span>
+                    <span class="btn-label">Daily Rewards</span>
+                </button>
+
+                <button id="mm-btn-shop" class="grid-btn">
+                    <span class="btn-icon">🛒</span>
+                    <span class="btn-label">Shop</span>
+                </button>
+
+                <button id="mm-btn-friends" class="grid-btn">
+                    <span class="btn-icon">👥</span>
+                    <span class="btn-label">Friends</span>
+                </button>
+
+                <button id="mm-btn-notifs" class="grid-btn notif-grid-btn">
+                    <span class="btn-icon">🔔</span>
+                    <span class="btn-label">Notifications</span>
+                    <span id="mm-notif-badge" class="grid-badge hidden">0</span>
+                </button>
+
+                <button id="mm-btn-stats" class="grid-btn">
+                    <span class="btn-icon">📊</span>
+                    <span class="btn-label">Statistics</span>
+                </button>
+
+                <button id="mm-btn-account" class="grid-btn">
+                    <span class="btn-icon">👤</span>
+                    <span class="btn-label">Player Account</span>
+                </button>
+
+                <button id="mm-btn-settings" class="grid-btn">
+                    <span class="btn-icon">⚙️</span>
+                    <span class="btn-label">Settings</span>
+                </button>
+
+                <button id="mm-btn-logout" class="grid-btn danger-grid-btn">
+                    <span class="btn-icon">🚪</span>
+                    <span class="btn-label">Logout</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: Focused Gameplay Screen -->
+    <div id="gameplay-screen" class="screen gameplay-screen game-container hidden">
+        <!-- Pure Gameplay Top Header -->
         <header class="top-bar" aria-label="Game Control Header">
             <div class="header-row primary-controls">
                 <div class="left-controls">
+                    <button id="btn-gameplay-home" class="icon-btn" aria-label="Main Menu" title="Main Menu (Esc)">🏠</button>
                     <button id="btn-pause" class="icon-btn" aria-label="Pause Game" title="Pause Game (P)">⏸</button>
-                    <button id="btn-level-select-nav" class="icon-btn" aria-label="Open Level Select" title="Select Level">🗺️</button>
-                    <button id="btn-leaderboard" class="icon-btn" aria-label="Open Leaderboard" title="Leaderboard (L)">🏆</button>
-                    <button id="btn-achievements" class="icon-btn" aria-label="Open Achievements" title="Achievements (A)">🎯</button>
-                    <button id="btn-daily-rewards" class="icon-btn" aria-label="Daily Rewards" title="Daily Rewards (D)">🎁</button>
-                    <button id="btn-shop" class="icon-btn" aria-label="Open Shop" title="Shop (S)">🛒</button>
-                    <button id="btn-friends" class="icon-btn" aria-label="Friends & Social" title="Friends (F)">👥</button>
-                    <button id="btn-notifications" class="icon-btn notif-bell-btn" aria-label="Notifications" title="Notifications (N)">
-                        🔔<span id="notif-badge" class="notif-badge-count hidden">0</span>
-                    </button>
-                    <button id="btn-stats" class="icon-btn" aria-label="Statistics Dashboard" title="Statistics (T)">📊</button>
-                    <button id="btn-settings" class="icon-btn" aria-label="Settings" title="Settings">⚙️</button>
-                    <button id="btn-open-login" class="icon-btn" aria-label="Account Login" title="Player Account">👤</button>
                 </div>
                 <h1 id="level-title" tabindex="0">Level 1 <span id="offline-badge" class="offline-badge hidden" title="Running in Offline Mode">Offline Mode</span></h1>
                 <div class="right-controls">
+                    <button id="btn-restart-hud" class="icon-btn" aria-label="Restart Level" title="Restart (R)">↻</button>
                     <button id="btn-undo" class="icon-btn" aria-label="Undo Move" title="Undo Move (U)">↺</button>
                     <button id="btn-hint" class="icon-btn" aria-label="Get Hint" title="Get Hint (H)">💡</button>
                 </div>
             </div>
 
-            <!-- Stats Bar Strip -->
+            <!-- Gameplay Stats HUD Strip -->
             <div class="header-row stats-strip" aria-label="Game Progress & Stats">
                 <div id="hearts-container" class="hearts-display" title="Lives Remaining">❤️ ❤️ ❤️</div>
                 <div id="timer-display" class="timer-display" title="Time Remaining">⏱ 00:00</div>
@@ -132,7 +239,7 @@
             <div class="pause-actions">
                 <button id="btn-resume-modal" class="primary-btn success-btn">▶ RESUME</button>
                 <button id="btn-restart-pause" class="primary-btn warning-btn">↻ RESTART</button>
-                <button id="btn-exit-modal" class="primary-btn danger-btn">🏠 LEVEL SELECT</button>
+                <button id="btn-exit-modal" class="primary-btn danger-btn">🏠 MAIN MENU</button>
             </div>
         </div>
     </div>
@@ -157,7 +264,8 @@
             <div class="celebration-actions">
                 <button id="btn-next" class="primary-btn celebration-btn success-btn">▶ CONTINUE</button>
                 <button id="btn-replay-celebration" class="primary-btn celebration-btn warning-btn">↻ REPLAY LEVEL</button>
-                <button id="btn-select-celebration" class="primary-btn celebration-btn secondary-btn">🏠 SELECT LEVEL</button>
+                <button id="btn-select-celebration" class="primary-btn celebration-btn secondary-btn">🗺️ SELECT LEVEL</button>
+                <button id="btn-main-menu-celebration" class="primary-btn celebration-btn danger-btn">🏠 MAIN MENU</button>
             </div>
         </div>
     </div>

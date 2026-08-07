@@ -11,21 +11,23 @@ import { FriendsScreen } from './ui/friends_screen.js';
 import { NotificationSystem } from './ui/notifications_screen.js';
 import { StatsDashboardScreen } from './ui/stats_screen.js';
 import { SettingsScreen } from './ui/settings_screen.js';
+import { NavigationManager } from './ui/nav_manager.js';
 import { api } from './api/client.js';
 import { cloudSave } from './services/cloud_save.js';
 
 let currentLevelIndex = 1;
-let gameLoop = null;
-let levelSelectScreen = null;
-let authScreens = null;
-let leaderboardScreen = null;
+export let gameLoop = null;
+export let levelSelectScreen = null;
+export let authScreens = null;
+export let leaderboardScreen = null;
 export let achievementsScreen = null;
-let dailyRewardsScreen = null;
-let shopScreen = null;
-let friendsScreen = null;
+export let dailyRewardsScreen = null;
+export let shopScreen = null;
+export let friendsScreen = null;
 export let notificationSystem = null;
-let statsDashboardScreen = null;
-let settingsScreen = null;
+export let statsDashboardScreen = null;
+export let settingsScreen = null;
+export let navManager = null;
 
 async function checkBackendStatus() {
     try {
@@ -57,6 +59,7 @@ async function loadLevelByIndex(idx) {
 async function init() {
     try {
         notificationSystem = new NotificationSystem();
+        window.notificationSystem = notificationSystem;
 
         updateLoadingProgress(5, "Checking Backend Health...");
         await checkBackendStatus();
@@ -67,116 +70,61 @@ async function init() {
         authScreens = new AuthScreens(async (res) => {
             console.log("Authenticated successfully:", res);
             await cloudSave.downloadCloudProgress();
+            if (navManager) navManager.showMainMenu();
             notificationSystem.notify("Welcome Back!", `Logged in as ${res.user?.username || 'Player'}`, "system", "👤");
         });
+        window.authScreens = authScreens;
 
         leaderboardScreen = new LeaderboardScreen();
+        window.leaderboardScreen = leaderboardScreen;
+
         achievementsScreen = new AchievementsScreen();
+        window.achievementsScreen = achievementsScreen;
+
         dailyRewardsScreen = new DailyRewardsScreen();
+        window.dailyRewardsScreen = dailyRewardsScreen;
+
         shopScreen = new ShopScreen();
+        window.shopScreen = shopScreen;
+
         friendsScreen = new FriendsScreen();
+        window.friendsScreen = friendsScreen;
+
         statsDashboardScreen = new StatsDashboardScreen();
+        window.statsDashboardScreen = statsDashboardScreen;
+
         settingsScreen = new SettingsScreen();
-        
-        const btnOpenLogin = document.getElementById('btn-open-login');
-        if (btnOpenLogin) {
-            btnOpenLogin.onclick = async () => {
-                try {
-                    const userData = await api.getMe();
-                    authScreens.showProfile(userData);
-                } catch (e) {
-                    authScreens.showLogin();
-                }
-            };
-        }
+        window.settingsScreen = settingsScreen;
 
-        const btnLeaderboard = document.getElementById('btn-leaderboard');
-        if (btnLeaderboard) {
-            btnLeaderboard.onclick = () => {
-                if (leaderboardScreen) {
-                    leaderboardScreen.show();
-                }
-            };
-        }
-
-        const btnAchievements = document.getElementById('btn-achievements');
-        if (btnAchievements) {
-            btnAchievements.onclick = () => {
-                if (achievementsScreen) {
-                    achievementsScreen.show();
-                }
-            };
-        }
-
-        const btnDailyRewards = document.getElementById('btn-daily-rewards');
-        if (btnDailyRewards) {
-            btnDailyRewards.onclick = () => {
-                if (dailyRewardsScreen) {
-                    dailyRewardsScreen.show();
-                }
-            };
-        }
-
-        const btnShop = document.getElementById('btn-shop');
-        if (btnShop) {
-            btnShop.onclick = () => {
-                if (shopScreen) {
-                    shopScreen.show();
-                }
-            };
-        }
-
-        const btnFriends = document.getElementById('btn-friends');
-        if (btnFriends) {
-            btnFriends.onclick = () => {
-                if (friendsScreen) {
-                    friendsScreen.show();
-                }
-            };
-        }
-
-        const btnStats = document.getElementById('btn-stats');
-        if (btnStats) {
-            btnStats.onclick = () => {
-                if (statsDashboardScreen) {
-                    statsDashboardScreen.show();
-                }
-            };
-        }
-
-        const btnSettings = document.getElementById('btn-settings');
-        if (btnSettings) {
-            btnSettings.onclick = () => {
-                if (settingsScreen) {
-                    settingsScreen.show();
-                }
-            };
-        }
-        
-        const btnLogout = document.getElementById('btn-logout');
-        if (btnLogout) {
-            btnLogout.onclick = async () => {
-                await api.logout();
-                authScreens.hideAll();
-                alert("Logged out.");
-            };
-        }
+        navManager = new NavigationManager();
+        window.navManager = navManager;
 
         await loader.init((pct, task) => {
             updateLoadingProgress(pct, task);
         });
         
-        levelSelectScreen = new LevelSelectScreen((selectedLvl) => {
-            loadLevelByIndex(selectedLvl);
+        levelSelectScreen = new LevelSelectScreen(async (selectedLvl) => {
+            await loadLevelByIndex(selectedLvl);
+            if (navManager) navManager.showGameplayScreen();
         });
+        window.levelSelectScreen = levelSelectScreen;
         
         gameLoop = new GameLoop('game-canvas');
+        window.gameLoop = gameLoop;
+
         const startLvl = cloudSave.localSave.current_level || 1;
         updateLoadingProgress(90, `Loading Level ${startLvl} Layout...`);
         await loadLevelByIndex(startLvl);
-        gameLoop.start();
-        
+
         updateLoadingProgress(100, "Starting Game...");
+        
+        // Auto-navigate: Skip welcome screen if user is already logged in
+        if (localStorage.getItem("access_token")) {
+            navManager.showMainMenu();
+        } else {
+            navManager.showWelcomeScreen();
+        }
+
         setTimeout(() => hideLoading(), 250);
         
     } catch (e) {
@@ -196,12 +144,12 @@ if (btnPause) {
     };
 }
 
-// Open Level Select Nav
-const btnLevelNav = document.getElementById('btn-level-select-nav');
-if (btnLevelNav) {
-    btnLevelNav.onclick = () => {
-        if (levelSelectScreen) {
-            levelSelectScreen.show(50, cloudSave.localSave.current_level || 1, cloudSave.localSave.completed_levels || {});
+// Restart HUD Button
+const btnRestartHud = document.getElementById('btn-restart-hud');
+if (btnRestartHud) {
+    btnRestartHud.onclick = () => {
+        if (gameLoop) {
+            gameLoop.restartLevel();
         }
     };
 }
@@ -226,14 +174,12 @@ if (btnRestartPause) {
     };
 }
 
-// Exit Pause Button
+// Exit Pause Button -> Return to Main Menu
 const btnExitModal = document.getElementById('btn-exit-modal');
 if (btnExitModal) {
     btnExitModal.onclick = () => {
         hidePauseModal();
-        if (levelSelectScreen) {
-            levelSelectScreen.show(50, cloudSave.localSave.current_level || 1, cloudSave.localSave.completed_levels || {});
-        }
+        if (navManager) navManager.showMainMenu();
     };
 }
 
@@ -256,6 +202,7 @@ if (btnNext) {
         currentLevelIndex++;
         if (currentLevelIndex > 50) currentLevelIndex = 1;
         await loadLevelByIndex(currentLevelIndex);
+        if (navManager) navManager.showGameplayScreen();
     };
 }
 
@@ -278,6 +225,15 @@ if (btnSelectCelebration) {
         if (levelSelectScreen) {
             levelSelectScreen.show(50, cloudSave.localSave.current_level || 1, cloudSave.localSave.completed_levels || {});
         }
+    };
+}
+
+// Main Menu Button in Celebration Modal
+const btnMainMenuCelebration = document.getElementById('btn-main-menu-celebration');
+if (btnMainMenuCelebration) {
+    btnMainMenuCelebration.onclick = () => {
+        hideVictory();
+        if (navManager) navManager.showMainMenu();
     };
 }
 
