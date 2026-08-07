@@ -584,3 +584,20 @@ canvas#game-canvas {
 .offline-badge.hidden {
     display: none !important;
 }
+
+/* Auth Error Messages */
+.auth-error-msg {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.auth-error-msg.hidden {
+    display: none !important;
+}

@@ -9,21 +9,76 @@ export class AuthScreens {
         this.upgradeModal = document.getElementById('upgrade-modal');
         this.profileModal = document.getElementById('profile-modal');
         
+        this.loginErrorElem = document.getElementById('login-error');
+        this.registerErrorElem = document.getElementById('register-error');
+        
         this.bindEvents();
+    }
+
+    validateEmail(email) {
+        if (!email) return true; // Email is optional
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    validatePassword(password) {
+        return password && password.length >= 6;
+    }
+
+    showLoginError(msg) {
+        if (this.loginErrorElem) {
+            this.loginErrorElem.innerText = msg;
+            this.loginErrorElem.classList.remove('hidden');
+        }
+    }
+
+    showRegisterError(msg) {
+        if (this.registerErrorElem) {
+            this.registerErrorElem.innerText = msg;
+            this.registerErrorElem.classList.remove('hidden');
+        }
+    }
+
+    clearErrors() {
+        if (this.loginErrorElem) {
+            this.loginErrorElem.innerText = '';
+            this.loginErrorElem.classList.add('hidden');
+        }
+        if (this.registerErrorElem) {
+            this.registerErrorElem.innerText = '';
+            this.registerErrorElem.classList.add('hidden');
+        }
     }
 
     bindEvents() {
         // Open Login Modal
         const btnOpenLogin = document.getElementById('btn-open-login');
-        if (btnOpenLogin) btnOpenLogin.onclick = () => this.showLogin();
+        if (btnOpenLogin) btnOpenLogin.onclick = async () => {
+            if (localStorage.getItem("access_token")) {
+                try {
+                    const userData = await api.getMe();
+                    this.showProfile(userData);
+                } catch (e) {
+                    this.showLogin();
+                }
+            } else {
+                this.showLogin();
+            }
+        };
         
         // Switch to Register
         const btnSwitchRegister = document.getElementById('btn-switch-register');
-        if (btnSwitchRegister) btnSwitchRegister.onclick = () => this.showRegister();
+        if (btnSwitchRegister) btnSwitchRegister.onclick = (e) => {
+            e.preventDefault();
+            this.showRegister();
+        };
         
         // Switch to Login
         const btnSwitchLogin = document.getElementById('btn-switch-login');
-        if (btnSwitchLogin) btnSwitchLogin.onclick = () => this.showLogin();
+        if (btnSwitchLogin) btnSwitchLogin.onclick = (e) => {
+            e.preventDefault();
+            this.showLogin();
+        };
         
         // Close Buttons
         document.querySelectorAll('.auth-close-btn').forEach(btn => {
@@ -35,14 +90,25 @@ export class AuthScreens {
         if (formLogin) {
             formLogin.onsubmit = async (e) => {
                 e.preventDefault();
-                const u = document.getElementById('login-username').value;
+                this.clearErrors();
+                const u = document.getElementById('login-username').value.trim();
                 const p = document.getElementById('login-password').value;
+                
+                if (!u) {
+                    this.showLoginError("Username is required.");
+                    return;
+                }
+                if (!p) {
+                    this.showLoginError("Password is required.");
+                    return;
+                }
+
                 try {
                     const res = await api.login(u, p);
                     this.hideAll();
                     if (this.onAuthSuccess) this.onAuthSuccess(res);
                 } catch (err) {
-                    alert(err.message || "Login failed.");
+                    this.showLoginError(err.message || "Invalid username or password.");
                 }
             };
         }
@@ -52,15 +118,30 @@ export class AuthScreens {
         if (formRegister) {
             formRegister.onsubmit = async (e) => {
                 e.preventDefault();
-                const u = document.getElementById('reg-username').value;
+                this.clearErrors();
+                const u = document.getElementById('reg-username').value.trim();
+                const em = document.getElementById('reg-email').value.trim();
                 const p = document.getElementById('reg-password').value;
-                const em = document.getElementById('reg-email').value;
+                
+                if (!u) {
+                    this.showRegisterError("Username is required.");
+                    return;
+                }
+                if (em && !this.validateEmail(em)) {
+                    this.showRegisterError("Please enter a valid email address.");
+                    return;
+                }
+                if (!this.validatePassword(p)) {
+                    this.showRegisterError("Password must be at least 6 characters long.");
+                    return;
+                }
+
                 try {
-                    const res = await api.register(u, p, em);
+                    const res = await api.register(u, p, em || null);
                     this.hideAll();
                     if (this.onAuthSuccess) this.onAuthSuccess(res);
                 } catch (err) {
-                    alert(err.message || "Registration failed.");
+                    this.showRegisterError(err.message || "Registration failed.");
                 }
             };
         }
@@ -69,18 +150,20 @@ export class AuthScreens {
         const btnGuestLogin = document.getElementById('btn-guest-login');
         if (btnGuestLogin) {
             btnGuestLogin.onclick = async () => {
+                this.clearErrors();
                 try {
                     const res = await api.guestLogin();
                     this.hideAll();
                     if (this.onAuthSuccess) this.onAuthSuccess(res);
                 } catch (err) {
-                    alert(err.message || "Guest login failed.");
+                    this.showLoginError(err.message || "Guest login failed.");
                 }
             };
         }
     }
 
     hideAll() {
+        this.clearErrors();
         if (this.loginModal) this.loginModal.classList.remove('active');
         if (this.registerModal) this.registerModal.classList.remove('active');
         if (this.upgradeModal) this.upgradeModal.classList.remove('active');

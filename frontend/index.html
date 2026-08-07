@@ -132,6 +132,7 @@
                 <h2>Player Login</h2>
                 <button class="icon-btn close-btn auth-close-btn">✕</button>
             </div>
+            <div id="login-error" class="auth-error-msg hidden"></div>
             <form id="form-login" class="auth-form">
                 <input type="text" id="login-username" class="auth-input" placeholder="Username" required />
                 <input type="password" id="login-password" class="auth-input" placeholder="Password" required />
@@ -151,10 +152,11 @@
                 <h2>Create Account</h2>
                 <button class="icon-btn close-btn auth-close-btn">✕</button>
             </div>
+            <div id="register-error" class="auth-error-msg hidden"></div>
             <form id="form-register" class="auth-form">
                 <input type="text" id="reg-username" class="auth-input" placeholder="Username" required />
                 <input type="email" id="reg-email" class="auth-input" placeholder="Email (optional)" />
-                <input type="password" id="reg-password" class="auth-input" placeholder="Password" required />
+                <input type="password" id="reg-password" class="auth-input" placeholder="Password (min 6 chars)" required />
                 <button type="submit" class="primary-btn success-btn">REGISTER</button>
             </form>
             <div class="auth-alt-actions">

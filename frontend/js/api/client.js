@@ -18,6 +18,34 @@ export class ApiClient {
         };
     }
 
+    async refreshTokens() {
+        const refreshToken = localStorage.getItem("refresh_token");
+        if (!refreshToken) {
+            this.clearTokens();
+            throw new Error("No refresh token available");
+        }
+        
+        const response = await fetch(`${this.baseURL}/auth/refresh`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refresh_token: refreshToken })
+        });
+        
+        if (!response.ok) {
+            this.clearTokens();
+            throw new Error("Session expired. Please log in again.");
+        }
+        
+        const data = await response.json();
+        this.saveTokens(data);
+        return data;
+    }
+
+    clearTokens() {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+    }
+
     async request(endpoint, options = {}, retries = 2) {
         const cacheKey = `${options.method || 'GET'}:${endpoint}:${options.body || ''}`;
         
@@ -38,6 +66,17 @@ export class ApiClient {
                             ...options.headers
                         }
                     });
+
+                    if (response.status === 401 && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/refresh') && !options._isRetry) {
+                        try {
+                            await this.refreshTokens();
+                            options._isRetry = true;
+                            return await this.request(endpoint, options, retries);
+                        } catch (refreshErr) {
+                            this.clearTokens();
+                            throw new Error("Session expired. Please log in again.");
+                        }
+                    }
                     
                     if (!response.ok) {
                         const err = await response.json().catch(() => ({}));
