@@ -167,15 +167,84 @@
 
     <!-- Profile Modal -->
     <div id="profile-modal" class="overlay" role="dialog" aria-modal="true">
-        <div class="modal-content auth-modal-content">
+        <div class="modal-content profile-modal-content">
             <div class="levelselect-header">
                 <h2>Player Profile</h2>
                 <button class="icon-btn close-btn auth-close-btn">✕</button>
             </div>
-            <div class="profile-info-body">
-                <h3 id="prof-username" style="color: var(--primary-color);">Player</h3>
-                <p id="prof-type" style="margin: 10px 0; font-weight: 600;">Verified Account</p>
-                <button id="btn-logout" class="primary-btn danger-btn">LOG OUT</button>
+            
+            <div id="profile-error" class="auth-error-msg hidden"></div>
+            
+            <div class="profile-body">
+                <!-- Avatar & Header Banner -->
+                <div class="profile-header-card">
+                    <div id="prof-avatar-display" class="prof-avatar-large">🎯</div>
+                    <div class="prof-user-details">
+                        <h3 id="prof-username">Player</h3>
+                        <p id="prof-email" class="prof-subtext">user@example.com</p>
+                        <span id="prof-type" class="prof-badge">Verified Account</span>
+                    </div>
+                </div>
+
+                <!-- Avatar Selection Grid -->
+                <div class="prof-section">
+                    <label class="prof-section-title">Select Avatar</label>
+                    <div id="avatar-selector-grid" class="avatar-grid">
+                        <button class="avatar-opt active" data-avatar="🎯">🎯</button>
+                        <button class="avatar-opt" data-avatar="🏹">🏹</button>
+                        <button class="avatar-opt" data-avatar="🚀">🚀</button>
+                        <button class="avatar-opt" data-avatar="🦊">🦊</button>
+                        <button class="avatar-opt" data-avatar="🐯">🐯</button>
+                        <button class="avatar-opt" data-avatar="👑">👑</button>
+                        <button class="avatar-opt" data-avatar="⚡">⚡</button>
+                        <button class="avatar-opt" data-avatar="💎">💎</button>
+                    </div>
+                </div>
+
+                <!-- Comprehensive Stats Grid -->
+                <div class="prof-section">
+                    <label class="prof-section-title">Player Statistics</label>
+                    <div class="prof-stats-grid">
+                        <div class="prof-stat-box"><span class="stat-icon">💰</span><span class="stat-val" id="prof-coins">0</span><span class="stat-lbl">Coins</span></div>
+                        <div class="prof-stat-box"><span class="stat-icon">⭐</span><span class="stat-val" id="prof-stars">0</span><span class="stat-lbl">Stars</span></div>
+                        <div class="prof-stat-box"><span class="stat-icon">🗺️</span><span class="stat-val" id="prof-cur-lvl">1</span><span class="stat-lbl">Current Level</span></div>
+                        <div class="prof-stat-box"><span class="stat-icon">🔓</span><span class="stat-val" id="prof-high-lvl">1</span><span class="stat-lbl">Highest Level</span></div>
+                        <div class="prof-stat-box"><span class="stat-icon">🎮</span><span class="stat-val" id="prof-played">0</span><span class="stat-lbl">Played</span></div>
+                        <div class="prof-stat-box"><span class="stat-icon">🏆</span><span class="stat-val" id="prof-won">0</span><span class="stat-lbl">Won</span></div>
+                        <div class="prof-stat-box"><span class="stat-icon">📊</span><span class="stat-val" id="prof-pct">0%</span><span class="stat-lbl">Completion</span></div>
+                        <div class="prof-stat-box"><span class="stat-icon">⏱️</span><span class="stat-val" id="prof-time">0s</span><span class="stat-lbl">Best Time</span></div>
+                        <div class="prof-stat-box"><span class="stat-icon">🎯</span><span class="stat-val" id="prof-score">0</span><span class="stat-lbl">Best Score</span></div>
+                    </div>
+                    <div class="prof-timestamps">
+                        <span>Date Joined: <strong id="prof-joined">N/A</strong></span>
+                        <span>Last Login: <strong id="prof-last-login">N/A</strong></span>
+                    </div>
+                </div>
+
+                <!-- Update Username -->
+                <div class="prof-section">
+                    <label class="prof-section-title">Update Username</label>
+                    <form id="form-update-username" class="prof-inline-form">
+                        <input type="text" id="edit-username-input" class="auth-input" placeholder="New Username" required />
+                        <button type="submit" class="primary-btn">Save</button>
+                    </form>
+                </div>
+
+                <!-- Change Password -->
+                <div class="prof-section">
+                    <label class="prof-section-title">Change Password</label>
+                    <form id="form-change-password" class="auth-form">
+                        <input type="password" id="old-pass-input" class="auth-input" placeholder="Current Password" required />
+                        <input type="password" id="new-pass-input" class="auth-input" placeholder="New Password (min 6 chars)" required />
+                        <button type="submit" class="primary-btn secondary-btn">Update Password</button>
+                    </form>
+                </div>
+
+                <!-- Danger Zone Actions -->
+                <div class="prof-section danger-zone">
+                    <button id="btn-logout" class="primary-btn danger-btn">LOG OUT</button>
+                    <button id="btn-delete-account" class="primary-btn outline-danger-btn">Delete Account</button>
+                </div>
             </div>
         </div>
     </div>

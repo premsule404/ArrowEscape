@@ -146,6 +146,32 @@ export class ApiClient {
     async getMe() {
         return this.request("/auth/me");
     }
+
+    async getProfile() {
+        return this.request("/profile");
+    }
+
+    async updateProfile(profileData) {
+        return this.request("/profile", {
+            method: "PATCH",
+            body: JSON.stringify(profileData)
+        });
+    }
+
+    async changePassword(oldPassword, newPassword) {
+        return this.request("/profile/change-password", {
+            method: "POST",
+            body: JSON.stringify({ old_password: oldPassword, new_password: newPassword })
+        });
+    }
+
+    async deleteAccount() {
+        const res = await this.request("/profile", {
+            method: "DELETE"
+        });
+        this.clearTokens();
+        return res;
+    }
     
     async logout() {
         const refToken = localStorage.getItem("refresh_token");
