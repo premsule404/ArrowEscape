@@ -248,6 +248,53 @@ export class ApiClient {
         });
     }
 
+    // --- Friends & Social ---
+    async getFriendsData() {
+        return this.request("/friends");
+    }
+
+    async searchPlayers(query) {
+        return this.request(`/friends/search?query=${encodeURIComponent(query)}`);
+    }
+
+    async sendFriendRequest(userId = null, username = null) {
+        return this.request("/friends/request", {
+            method: "POST",
+            body: JSON.stringify({ user_id: userId, username })
+        });
+    }
+
+    async acceptFriendRequest(requestId) {
+        return this.request("/friends/accept", {
+            method: "POST",
+            body: JSON.stringify({ request_id: requestId })
+        });
+    }
+
+    async rejectFriendRequest(requestId) {
+        return this.request("/friends/reject", {
+            method: "POST",
+            body: JSON.stringify({ request_id: requestId })
+        });
+    }
+
+    async removeFriend(friendId) {
+        return this.request(`/friends/${friendId}`, {
+            method: "DELETE"
+        });
+    }
+
+    async challengeFriend(friendId, levelNum = 1) {
+        return this.request("/friends/challenge", {
+            method: "POST",
+            body: JSON.stringify({ friend_id: friendId, level_num: levelNum })
+        });
+    }
+
+    async getFriendProfile(userId) {
+        return this.request(`/friends/profile/${userId}`);
+    }
+
     // --- Leaderboard & Profile ---
     async getLeaderboard(category = "stars", scope = "global", timeframe = "all_time") {
         return this.request(`/leaderboard?category=${category}&scope=${scope}&timeframe=${timeframe}`);

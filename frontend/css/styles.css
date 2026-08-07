@@ -1413,3 +1413,161 @@ body[data-theme="theme_sunset"] {
     --primary-hover: #f97316;
     --accent-color: #ef4444;
 }
+
+/* Friends Modal */
+.friends-modal-content {
+    max-width: clamp(340px, 92vw, 650px);
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+}
+
+.invite-btn {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    margin-top: 4px;
+}
+
+.friends-search-row {
+    margin-top: 14px;
+}
+
+.friends-search-input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    border-radius: 12px;
+}
+
+.friends-tabs {
+    margin-top: 14px;
+}
+
+.friends-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+    overflow-y: auto;
+    max-height: 440px;
+    padding-right: 4px;
+}
+
+.friend-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+}
+
+.friend-avatar-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.friend-avatar {
+    font-size: 2.2rem;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #0f172a;
+}
+
+.status-dot.online {
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+}
+
+.status-dot.offline {
+    background: #94a3b8;
+}
+
+.friend-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.friend-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-text {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.friend-username {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.friend-stats {
+    font-size: 0.75rem;
+    color: #facc15;
+    font-weight: 600;
+}
+
+.friend-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.challenge-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.danger-icon-btn {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.friend-badge, .pending-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+
+.friend-badge {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.pending-badge {
+    background: rgba(250, 204, 21, 0.2);
+    color: #facc15;
+}
+
+.friends-loading, .friends-empty, .friends-error {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}

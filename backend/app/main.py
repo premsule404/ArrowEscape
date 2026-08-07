@@ -67,6 +67,7 @@ app.include_router(themes.router, prefix="/api/v1/themes", tags=["Themes"])
 app.include_router(leaderboard.router, prefix="/api/v1/leaderboard", tags=["Leaderboard"])
 app.include_router(daily.router, prefix="/api/v1/daily", tags=["Daily Challenges"])
 app.include_router(shop.router, prefix="/api/v1/shop", tags=["Shop"])
+app.include_router(friends.router, prefix="/api/v1/friends", tags=["Friends"])
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
 

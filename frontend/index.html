@@ -46,6 +46,7 @@
                     <button id="btn-achievements" class="icon-btn" aria-label="Open Achievements" title="Achievements (A)">🎖️</button>
                     <button id="btn-daily-rewards" class="icon-btn" aria-label="Daily Rewards" title="Daily Rewards (D)">🎁</button>
                     <button id="btn-shop" class="icon-btn" aria-label="Open Shop" title="Shop (S)">🛒</button>
+                    <button id="btn-friends" class="icon-btn" aria-label="Friends & Social" title="Friends (F)">👥</button>
                     <button id="btn-open-login" class="icon-btn" aria-label="Account Login" title="Player Account">👤</button>
                 </div>
                 <h1 id="level-title" tabindex="0">Level 1 <span id="offline-badge" class="offline-badge hidden" title="Running in Offline Mode">Offline Mode</span></h1>
@@ -275,6 +276,65 @@
 
             <div id="shop-items-grid" class="shop-items-grid">
                 <!-- Shop item cards populated dynamically by ShopScreen JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Friends & Social Modal -->
+    <div id="friends-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="friends-title">
+        <div class="modal-content friends-modal-content">
+            <div class="levelselect-header">
+                <div>
+                    <h2 id="friends-title">Friends & Social 👥</h2>
+                    <button id="btn-copy-invite" class="secondary-btn invite-btn">📋 Copy Invite Link</button>
+                </div>
+                <button id="btn-close-friends" class="icon-btn close-btn auth-close-btn" aria-label="Close Friends">✕</button>
+            </div>
+
+            <div class="friends-search-row">
+                <input type="text" id="friends-search-input" class="auth-input friends-search-input" placeholder="🔍 Search players by username or name...">
+            </div>
+
+            <div id="friends-tabs" class="tab-group friends-tabs">
+                <button class="tab-btn active" data-tab="friends">👥 My Friends</button>
+                <button class="tab-btn" data-tab="requests">📩 Requests</button>
+                <button class="tab-btn" data-tab="recent">🕒 Recent Players</button>
+            </div>
+
+            <div id="friends-list-container" class="friends-list-container">
+                <!-- Friend cards populated dynamically by FriendsScreen JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Friend Profile Modal -->
+    <div id="friend-profile-modal" class="overlay" role="dialog" aria-modal="true">
+        <div class="modal-content profile-modal-content">
+            <button id="btn-close-friend-profile" class="icon-btn close-btn auth-close-btn" aria-label="Close Friend Profile">✕</button>
+            <div class="profile-header-card">
+                <div id="fp-avatar" class="profile-avatar-large">🎯</div>
+                <h2 id="fp-name" class="profile-username">Player Name</h2>
+                <span id="fp-username" class="profile-email">@username</span>
+                <span id="fp-country" class="profile-joined">Global</span>
+            </div>
+
+            <div class="profile-stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value" id="fp-stars">0</span>
+                    <span class="stat-label">Total Stars ⭐</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="fp-coins">0</span>
+                    <span class="stat-label">Total Coins 💰</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="fp-completed">0</span>
+                    <span class="stat-label">Levels Cleared 🗺️</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="fp-highest">1</span>
+                    <span class="stat-label">Highest Level 🏆</span>
+                </div>
             </div>
         </div>
     </div>

@@ -7,6 +7,7 @@ import { LeaderboardScreen } from './ui/leaderboard_screen.js';
 import { AchievementsScreen } from './ui/achievements_screen.js';
 import { DailyRewardsScreen } from './ui/daily_rewards_screen.js';
 import { ShopScreen } from './ui/shop_screen.js';
+import { FriendsScreen } from './ui/friends_screen.js';
 import { api } from './api/client.js';
 import { cloudSave } from './services/cloud_save.js';
 
@@ -18,6 +19,7 @@ let leaderboardScreen = null;
 export let achievementsScreen = null;
 let dailyRewardsScreen = null;
 let shopScreen = null;
+let friendsScreen = null;
 
 async function checkBackendStatus() {
     try {
@@ -60,6 +62,7 @@ async function init() {
         achievementsScreen = new AchievementsScreen();
         dailyRewardsScreen = new DailyRewardsScreen();
         shopScreen = new ShopScreen();
+        friendsScreen = new FriendsScreen();
         
         const btnOpenLogin = document.getElementById('btn-open-login');
         if (btnOpenLogin) {
@@ -105,6 +108,15 @@ async function init() {
             btnShop.onclick = () => {
                 if (shopScreen) {
                     shopScreen.show();
+                }
+            };
+        }
+
+        const btnFriends = document.getElementById('btn-friends');
+        if (btnFriends) {
+            btnFriends.onclick = () => {
+                if (friendsScreen) {
+                    friendsScreen.show();
                 }
             };
         }
