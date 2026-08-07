@@ -10,6 +10,7 @@ import { ShopScreen } from './ui/shop_screen.js';
 import { FriendsScreen } from './ui/friends_screen.js';
 import { NotificationSystem } from './ui/notifications_screen.js';
 import { StatsDashboardScreen } from './ui/stats_screen.js';
+import { SettingsScreen } from './ui/settings_screen.js';
 import { api } from './api/client.js';
 import { cloudSave } from './services/cloud_save.js';
 
@@ -24,6 +25,7 @@ let shopScreen = null;
 let friendsScreen = null;
 export let notificationSystem = null;
 let statsDashboardScreen = null;
+let settingsScreen = null;
 
 async function checkBackendStatus() {
     try {
@@ -74,6 +76,7 @@ async function init() {
         shopScreen = new ShopScreen();
         friendsScreen = new FriendsScreen();
         statsDashboardScreen = new StatsDashboardScreen();
+        settingsScreen = new SettingsScreen();
         
         const btnOpenLogin = document.getElementById('btn-open-login');
         if (btnOpenLogin) {
@@ -137,6 +140,15 @@ async function init() {
             btnStats.onclick = () => {
                 if (statsDashboardScreen) {
                     statsDashboardScreen.show();
+                }
+            };
+        }
+
+        const btnSettings = document.getElementById('btn-settings');
+        if (btnSettings) {
+            btnSettings.onclick = () => {
+                if (settingsScreen) {
+                    settingsScreen.show();
                 }
             };
         }
