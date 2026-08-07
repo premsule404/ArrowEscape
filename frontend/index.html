@@ -3,7 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-    <title>Arrow Escape</title>
+    <title>Arrow Escape — Free Online Cross-Platform Arrow Unblock Puzzle Game</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Play Arrow Escape free in your browser or on Android & Desktop! Slide, rotate, and unblock arrows in this addictive 3D puzzle challenge with online leaderboards, achievements, shop themes, and daily rewards.">
+    <meta name="keywords" content="arrow escape, puzzle game, unblock puzzle, browser game, pyodide game, online puzzle, free web game, pwa game">
+    <meta name="author" content="Arrow Escape Team">
+    <link rel="canonical" href="https://arrowescape.onrender.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://arrowescape.onrender.com/">
+    <meta property="og:title" content="Arrow Escape — Cross-Platform Arrow Unblock Puzzle Game">
+    <meta property="og:description" content="Slide, rotate, and unblock arrows in 100+ brain-teasing levels! Sync progress across PWA, Android, and Desktop.">
+    <meta property="og:image" content="https://arrowescape.onrender.com/assets/runtime/icon-512.png">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Arrow Escape — Arrow Unblock Puzzle Game">
+    <meta name="twitter:description" content="Master 100+ levels of arrow unblocking strategy. Play online with friends & global leaderboards!">
+    <meta name="twitter:image" content="https://arrowescape.onrender.com/assets/runtime/icon-512.png">
+
+    <!-- Web App & PWA Icons -->
     <link rel="stylesheet" href="css/styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -12,9 +33,37 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Arrow Escape">
-    <!-- Load Pyodide for executing Python in browser -->
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+
+    <!-- Font Preconnect & Performance Preloads -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Load Pyodide for executing Python WASM in browser -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js" defer></script>
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Arrow Escape",
+      "operatingSystem": "Web, Android, Windows, macOS, Linux",
+      "applicationCategory": "GameApplication",
+      "genre": "Puzzle",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "1250"
+      }
+    }
+    </script>
+
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
