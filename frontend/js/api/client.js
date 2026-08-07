@@ -218,6 +218,17 @@ export class ApiClient {
         });
     }
 
+    // --- Daily Rewards ---
+    async getDailyStatus() {
+        return this.request("/daily/status");
+    }
+
+    async claimDailyReward() {
+        return this.request("/daily/claim", {
+            method: "POST"
+        });
+    }
+
     // --- Leaderboard & Profile ---
     async getLeaderboard(category = "stars", scope = "global", timeframe = "all_time") {
         return this.request(`/leaderboard?category=${category}&scope=${scope}&timeframe=${timeframe}`);

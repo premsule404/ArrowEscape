@@ -5,6 +5,7 @@ import { LevelSelectScreen } from './ui/level_select_screen.js';
 import { AuthScreens } from './ui/auth_screens.js';
 import { LeaderboardScreen } from './ui/leaderboard_screen.js';
 import { AchievementsScreen } from './ui/achievements_screen.js';
+import { DailyRewardsScreen } from './ui/daily_rewards_screen.js';
 import { api } from './api/client.js';
 import { cloudSave } from './services/cloud_save.js';
 
@@ -14,6 +15,7 @@ let levelSelectScreen = null;
 let authScreens = null;
 let leaderboardScreen = null;
 export let achievementsScreen = null;
+let dailyRewardsScreen = null;
 
 async function checkBackendStatus() {
     try {
@@ -54,6 +56,7 @@ async function init() {
 
         leaderboardScreen = new LeaderboardScreen();
         achievementsScreen = new AchievementsScreen();
+        dailyRewardsScreen = new DailyRewardsScreen();
         
         const btnOpenLogin = document.getElementById('btn-open-login');
         if (btnOpenLogin) {
@@ -81,6 +84,15 @@ async function init() {
             btnAchievements.onclick = () => {
                 if (achievementsScreen) {
                     achievementsScreen.show();
+                }
+            };
+        }
+
+        const btnDailyRewards = document.getElementById('btn-daily-rewards');
+        if (btnDailyRewards) {
+            btnDailyRewards.onclick = () => {
+                if (dailyRewardsScreen) {
+                    dailyRewardsScreen.show();
                 }
             };
         }
