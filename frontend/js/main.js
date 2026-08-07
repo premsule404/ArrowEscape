@@ -1,6 +1,6 @@
 import { loader } from './engine/pyodide_loader.js';
 import { GameLoop } from './core/game_loop.js';
-import { hideLoading, hideVictory, hidePauseModal, setLevelTitle, updateLoadingProgress } from './ui/screens.js';
+import { hideLoading, hideVictory, hidePauseModal, setLevelTitle, updateLoadingProgress, showOfflineMode, hideOfflineMode } from './ui/screens.js';
 import { LevelSelectScreen } from './ui/level_select_screen.js';
 import { AuthScreens } from './ui/auth_screens.js';
 import { api } from './api/client.js';
@@ -9,6 +9,21 @@ let currentLevelIndex = 1;
 let gameLoop = null;
 let levelSelectScreen = null;
 let authScreens = null;
+
+async function checkBackendStatus() {
+    try {
+        const health = await api.checkHealth();
+        if (health && health.status === "ok") {
+            hideOfflineMode();
+            console.log("Connected to production backend at:", api.baseURL);
+            return true;
+        }
+    } catch (e) {
+        console.warn("Backend API unavailable, using Offline Mode:", e.message);
+    }
+    showOfflineMode();
+    return false;
+}
 
 async function loadLevelByIndex(idx) {
     currentLevelIndex = idx;
@@ -21,6 +36,9 @@ async function loadLevelByIndex(idx) {
 
 async function init() {
     try {
+        updateLoadingProgress(5, "Checking Backend Health...");
+        await checkBackendStatus();
+
         authScreens = new AuthScreens((res) => {
             console.log("Authenticated successfully:", res);
         });

@@ -127,3 +127,13 @@ export function updateHUD(hearts, remainingSecs, remainingArrows, totalArrows, m
         moveCountDisplay.innerText = `${m}`;
     }
 }
+
+export function showOfflineMode() {
+    const badge = document.getElementById('offline-badge');
+    if (badge) badge.classList.remove('hidden');
+}
+
+export function hideOfflineMode() {
+    const badge = document.getElementById('offline-badge');
+    if (badge) badge.classList.add('hidden');
+}

@@ -1,3 +1,5 @@
+import { API_V1_URL } from '../config.js';
+
 export class PyodideLoader {
     constructor() {
         this.pyodide = null;
@@ -133,7 +135,7 @@ export class PyodideLoader {
         let jsonText = null;
         
         try {
-            const apiRes = await fetch(`/api/v1/levels/${levelNumOrId}`);
+            const apiRes = await fetch(`${API_V1_URL}/levels/${levelNumOrId}`);
             if (apiRes.ok) {
                 const jsonData = await apiRes.json();
                 jsonText = JSON.stringify(jsonData);

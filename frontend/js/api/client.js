@@ -1,7 +1,13 @@
+import { API_V1_URL } from '../config.js';
+
 export class ApiClient {
-    constructor(baseURL = window.location.origin.includes('localhost') ? "http://localhost:8000/api/v1" : "/api/v1") {
+    constructor(baseURL = API_V1_URL) {
         this.baseURL = baseURL;
         this.inFlightRequests = new Map();
+    }
+
+    async checkHealth() {
+        return this.request("/health", { method: "GET" }, 1);
     }
 
     getHeaders() {
