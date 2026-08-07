@@ -141,63 +141,6 @@ async function init() {
             };
         }
         
-        const btnOpenLogin = document.getElementById('btn-open-login');
-        if (btnOpenLogin) {
-            btnOpenLogin.onclick = async () => {
-                try {
-                    const userData = await api.getMe();
-                    authScreens.showProfile(userData);
-                } catch (e) {
-                    authScreens.showLogin();
-                }
-            };
-        }
-
-        const btnLeaderboard = document.getElementById('btn-leaderboard');
-        if (btnLeaderboard) {
-            btnLeaderboard.onclick = () => {
-                if (leaderboardScreen) {
-                    leaderboardScreen.show();
-                }
-            };
-        }
-
-        const btnAchievements = document.getElementById('btn-achievements');
-        if (btnAchievements) {
-            btnAchievements.onclick = () => {
-                if (achievementsScreen) {
-                    achievementsScreen.show();
-                }
-            };
-        }
-
-        const btnDailyRewards = document.getElementById('btn-daily-rewards');
-        if (btnDailyRewards) {
-            btnDailyRewards.onclick = () => {
-                if (dailyRewardsScreen) {
-                    dailyRewardsScreen.show();
-                }
-            };
-        }
-
-        const btnShop = document.getElementById('btn-shop');
-        if (btnShop) {
-            btnShop.onclick = () => {
-                if (shopScreen) {
-                    shopScreen.show();
-                }
-            };
-        }
-
-        const btnFriends = document.getElementById('btn-friends');
-        if (btnFriends) {
-            btnFriends.onclick = () => {
-                if (friendsScreen) {
-                    friendsScreen.show();
-                }
-            };
-        }
-        
         const btnLogout = document.getElementById('btn-logout');
         if (btnLogout) {
             btnLogout.onclick = async () => {
@@ -215,15 +158,14 @@ async function init() {
             loadLevelByIndex(selectedLvl);
         });
         
+        gameLoop = new GameLoop('game-canvas');
         const startLvl = cloudSave.localSave.current_level || 1;
         updateLoadingProgress(90, `Loading Level ${startLvl} Layout...`);
         await loadLevelByIndex(startLvl);
+        gameLoop.start();
         
         updateLoadingProgress(100, "Starting Game...");
         setTimeout(() => hideLoading(), 250);
-        
-        gameLoop = new GameLoop('game-canvas');
-        gameLoop.start();
         
     } catch (e) {
         console.error("Initialization Failed:", e);
