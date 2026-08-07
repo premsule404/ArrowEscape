@@ -45,6 +45,7 @@
                     <button id="btn-leaderboard" class="icon-btn" aria-label="Open Leaderboard" title="Leaderboard (L)">🏆</button>
                     <button id="btn-achievements" class="icon-btn" aria-label="Open Achievements" title="Achievements (A)">🎖️</button>
                     <button id="btn-daily-rewards" class="icon-btn" aria-label="Daily Rewards" title="Daily Rewards (D)">🎁</button>
+                    <button id="btn-shop" class="icon-btn" aria-label="Open Shop" title="Shop (S)">🛒</button>
                     <button id="btn-open-login" class="icon-btn" aria-label="Account Login" title="Player Account">👤</button>
                 </div>
                 <h1 id="level-title" tabindex="0">Level 1 <span id="offline-badge" class="offline-badge hidden" title="Running in Offline Mode">Offline Mode</span></h1>
@@ -246,6 +247,35 @@
             <div class="celebration-icon">🎉🎁🎉</div>
             <h3>Daily Reward Claimed!</h3>
             <div id="daily-popup-text" class="daily-popup-text">+100 💰</div>
+        </div>
+    </div>
+
+    <!-- Shop & Inventory Modal -->
+    <div id="shop-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="shop-title">
+        <div class="modal-content shop-modal-content">
+            <div class="levelselect-header">
+                <div>
+                    <h2 id="shop-title">Arrow Escape Shop 🛒</h2>
+                    <div class="shop-balance-row">
+                        <span class="shop-balance-badge">💰 <span id="shop-coins-val">0</span></span>
+                        <span class="shop-balance-badge">⭐ <span id="shop-stars-val">0</span></span>
+                    </div>
+                </div>
+                <button id="btn-close-shop" class="icon-btn close-btn auth-close-btn" aria-label="Close Shop">✕</button>
+            </div>
+
+            <div id="shop-category-tabs" class="tab-group shop-tabs">
+                <button class="tab-btn active" data-category="themes">🎨 Themes</button>
+                <button class="tab-btn" data-category="arrow_skins">🎯 Skins</button>
+                <button class="tab-btn" data-category="board_themes">🧱 Boards</button>
+                <button class="tab-btn" data-category="boosters">⚡ Boosters</button>
+                <button class="tab-btn" data-category="coin_packs">💰 Coins</button>
+                <button class="tab-btn" data-category="inventory">🎒 Owned</button>
+            </div>
+
+            <div id="shop-items-grid" class="shop-items-grid">
+                <!-- Shop item cards populated dynamically by ShopScreen JS -->
+            </div>
         </div>
     </div>
 

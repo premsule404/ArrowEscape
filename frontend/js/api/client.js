@@ -229,6 +229,25 @@ export class ApiClient {
         });
     }
 
+    // --- Shop & Inventory ---
+    async getShopItems() {
+        return this.request("/shop/items");
+    }
+
+    async purchaseShopItem(itemId) {
+        return this.request("/shop/purchase", {
+            method: "POST",
+            body: JSON.stringify({ item_id: itemId })
+        });
+    }
+
+    async equipShopItem(itemId, itemType) {
+        return this.request("/shop/equip", {
+            method: "POST",
+            body: JSON.stringify({ item_id: itemId, item_type: itemType })
+        });
+    }
+
     // --- Leaderboard & Profile ---
     async getLeaderboard(category = "stars", scope = "global", timeframe = "all_time") {
         return this.request(`/leaderboard?category=${category}&scope=${scope}&timeframe=${timeframe}`);
