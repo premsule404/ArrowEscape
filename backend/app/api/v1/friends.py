@@ -123,6 +123,9 @@ def search_players(query: str = Query(..., min_length=1), user: User = Depends(r
 
     return results
 
+from datetime import datetime
+from ...models.notifications import Notification
+
 @router.post('/request')
 def send_friend_request(payload: FriendRequestPayload, user: User = Depends(require_current_user), db: Session = Depends(get_db)):
     target_user = None
@@ -159,6 +162,18 @@ def send_friend_request(payload: FriendRequestPayload, user: User = Depends(requ
 
     req = FriendRequest(sender_id=user.id, receiver_id=target_user.id, status="pending")
     db.add(req)
+    
+    # Notify target user
+    notif = Notification(
+        user_id=target_user.id,
+        type="friend",
+        title="Friend Request 📩",
+        content=f"{user.username} sent you a friend request!",
+        icon="👥",
+        read=False,
+        created_at=datetime.utcnow()
+    )
+    db.add(notif)
     db.commit()
 
     return {"success": True, "message": f"Friend request sent to {target_user.username}!"}
@@ -171,6 +186,18 @@ def accept_friend_request(payload: ActionRequestPayload, user: User = Depends(re
 
     req.status = "accepted"
     db.add(Friend(user_id=req.sender_id, friend_id=user.id))
+    
+    # Notify sender user
+    notif = Notification(
+        user_id=req.sender_id,
+        type="friend",
+        title="Friend Request Accepted 🎉",
+        content=f"{user.username} accepted your friend request!",
+        icon="👥",
+        read=False,
+        created_at=datetime.utcnow()
+    )
+    db.add(notif)
     db.commit()
 
     return {"success": True, "message": "Friend request accepted!"}
@@ -208,6 +235,19 @@ def challenge_friend(payload: ChallengePayload, user: User = Depends(require_cur
     friend_user = db.query(User).filter(User.id == payload.friend_id).first()
     if not friend_user:
         raise HTTPException(status_code=404, detail="Friend not found.")
+
+    # Notify friend user
+    notif = Notification(
+        user_id=friend_user.id,
+        type="challenge",
+        title="Level Challenge! ⚔️",
+        content=f"{user.username} challenged you to clear Level {payload.level_num}!",
+        icon="⚔️",
+        read=False,
+        created_at=datetime.utcnow()
+    )
+    db.add(notif)
+    db.commit()
 
     return {
         "success": True,

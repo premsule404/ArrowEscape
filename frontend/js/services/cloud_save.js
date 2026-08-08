@@ -174,6 +174,28 @@ export class CloudSaveManager {
         return this.localSave;
     }
 
+    resetToDefaults() {
+        this.localSave = {
+            current_level: 1,
+            completed_levels: {},
+            total_coins: 0,
+            total_stars: 0,
+            boosters: { hints: 3 },
+            hearts: 3,
+            settings: { theme: 'default', sound_enabled: true },
+            owned_items: ["theme_neon", "skin_classic", "board_slate"],
+            equipped_theme: "theme_neon",
+            equipped_skin: "skin_classic",
+            equipped_board: "board_slate",
+            daily_streak: 0,
+            last_daily_claim: null,
+            total_daily_claims: 0,
+            last_synced_at: null
+        };
+        this.saveLocalSave();
+        playerState.resetToGuest();
+    }
+
     async downloadCloudProgress() {
         if (!localStorage.getItem("access_token")) {
             playerState.syncFromLocalSave();
@@ -183,20 +205,19 @@ export class CloudSaveManager {
         try {
             const progress = await api.getProgress();
             if (progress) {
-                this.localSave.total_coins = Math.max(this.localSave.total_coins || 0, progress.total_coins || 0);
-                this.localSave.total_stars = Math.max(this.localSave.total_stars || 0, progress.total_stars || 0);
-                this.localSave.current_level = Math.max(this.localSave.current_level || 1, progress.current_level || 1);
+                this.localSave.total_coins = progress.total_coins ?? 0;
+                this.localSave.total_stars = progress.total_stars ?? 0;
+                this.localSave.current_level = progress.current_level ?? 1;
+                this.localSave.completed_levels = {};
 
                 if (progress.levels) {
-                    if (!this.localSave.completed_levels) this.localSave.completed_levels = {};
                     progress.levels.forEach(lvl => {
-                        const existing = this.localSave.completed_levels[lvl.level_num] || {};
                         this.localSave.completed_levels[lvl.level_num] = {
-                            stars: Math.max(existing.stars || 0, lvl.stars || 0),
-                            best_moves: Math.min(existing.best_moves || 9999, lvl.best_moves || 9999),
-                            best_time: (existing.best_time === 0 || lvl.best_time < existing.best_time) ? lvl.best_time : existing.best_time,
-                            base_coins: Math.max(existing.base_coins || 0, lvl.coins_claimed || 0),
-                            completed: existing.completed || lvl.completed
+                            stars: lvl.stars || 0,
+                            best_moves: lvl.best_moves || 9999,
+                            best_time: lvl.best_time || 0,
+                            base_coins: lvl.coins_claimed || 0,
+                            completed: lvl.completed
                         };
                     });
                 }
@@ -208,8 +229,6 @@ export class CloudSaveManager {
                     current_level: this.localSave.current_level,
                     completed_levels: this.localSave.completed_levels
                 });
-
-                await this.syncToCloud();
             }
         } catch (e) {
             console.warn("Failed to download cloud progress:", e.message);

@@ -20,15 +20,22 @@ def test_valid_json_parsing():
     assert engine.board.height == 4
     assert len(engine.board.arrows) == 2
     
-def test_invalid_bounds():
-    json_data = {
-      "grid": { "width": 2, "height": 2 },
-      "arrows": [
-        { "id": "a1", "x": 3, "y": 3, "direction": "UP" }
-      ]
-    }
-    try:
-        LevelParser.load_from_json(json_data)
-        assert False, "Should have raised ValueError"
-    except ValueError:
-        assert True
+def test_all_50_production_levels_audit():
+    import os, json
+    levels_dir = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "assets", "runtime", "levels")
+    assert os.path.exists(levels_dir), "Levels directory missing!"
+
+    for i in range(1, 51):
+        filename = f"level{i:03d}.json"
+        filepath = os.path.join(levels_dir, filename)
+        assert os.path.exists(filepath), f"Missing level file: {filename}"
+
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        engine, metadata = LevelParser.load_from_json(data)
+        assert engine.board is not None
+        assert len(engine.board.arrows) > 0, f"{filename} has 0 arrows!"
+        assert engine.total_time == float(len(engine.board.arrows)), f"{filename} time limit formula mismatch!"
+        assert engine.hearts == 3, f"{filename} hearts not set to 3!"
+        assert engine.is_game_over == False

@@ -121,6 +121,7 @@ export class AuthScreens {
                 if (!p) return this.showLoginError("Password is required.");
 
                 try {
+                    cloudSave.resetToDefaults();
                     const res = await api.login(u, p);
                     this.hideAll();
                     if (this.onAuthSuccess) await this.onAuthSuccess(res);
@@ -145,6 +146,7 @@ export class AuthScreens {
                 if (!this.validatePassword(p)) return this.showRegisterError("Password must be at least 6 characters long.");
 
                 try {
+                    cloudSave.resetToDefaults();
                     const res = await api.register(u, p, em || null);
                     this.hideAll();
                     if (this.onAuthSuccess) await this.onAuthSuccess(res);
@@ -160,6 +162,7 @@ export class AuthScreens {
             btnGuestLogin.onclick = async () => {
                 this.clearErrors();
                 try {
+                    cloudSave.resetToDefaults();
                     const res = await api.guestLogin();
                     this.hideAll();
                     if (this.onAuthSuccess) await this.onAuthSuccess(res);
@@ -179,12 +182,13 @@ export class AuthScreens {
                 const avatarDisplay = document.getElementById('prof-avatar-display');
                 if (avatarDisplay) avatarDisplay.innerText = avatar;
 
-                if (localStorage.getItem("access_token")) {
-                    try {
+                try {
+                    if (localStorage.getItem("access_token")) {
                         await api.updateProfile({ avatar });
-                    } catch (err) {
-                        this.showProfileError("Failed to update avatar.");
                     }
+                    playerState.update({ avatar });
+                } catch (e) {
+                    console.warn("Failed to update avatar:", e);
                 }
             };
         });
@@ -202,6 +206,7 @@ export class AuthScreens {
                     const res = await api.updateProfile({ username: newUsername });
                     if (res && res.username) {
                         document.getElementById('prof-username').innerText = res.username;
+                        playerState.update({ username: res.username });
                         alert("Username updated successfully!");
                     }
                 } catch (err) {
@@ -236,8 +241,14 @@ export class AuthScreens {
         const btnLogout = document.getElementById('btn-logout');
         if (btnLogout) {
             btnLogout.onclick = async () => {
-                await api.logout();
+                try {
+                    await api.logout();
+                } catch (e) {}
+                cloudSave.resetToDefaults();
                 this.hideAll();
+                if (window.navManager) {
+                    window.navManager.showWelcomeScreen();
+                }
                 alert("Logged out successfully.");
             };
         }

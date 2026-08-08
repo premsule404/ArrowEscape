@@ -214,3 +214,76 @@ def test_inventory_transactions_sync_status_and_admin():
     sync_status = client.get("/api/v1/sync/status", headers=user_headers)
     assert sync_status.status_code == 200
     assert sync_status.json()["sync_status"] == "UP_TO_DATE"
+
+def test_new_account_isolation_and_level1_start():
+    # 1. User A Register & Play
+    u_a_id = uuid.uuid4().hex[:6]
+    u_a_name = f"userA_{u_a_id}"
+    res_a = client.post("/api/v1/auth/register", json={"username": u_a_name, "password": "password123"})
+    assert res_a.status_code == 200
+    token_a = res_a.json()["access_token"]
+    headers_a = {"Authorization": f"Bearer {token_a}"}
+
+    # Verify User A starts at Level 1 with 0 coins
+    prog_a_init = client.get("/api/v1/progress", headers=headers_a).json()
+    assert prog_a_init["current_level"] == 1
+    assert prog_a_init["total_coins"] == 0
+    assert prog_a_init["total_stars"] == 0
+    assert len(prog_a_init["levels"]) == 0
+
+    # User A completes Level 1 & 2
+    client.post("/api/v1/cloud/sync", json={
+        "levels": [
+            {"level_id": 1, "stars": 3, "moves": 5, "time": 10.0, "base_coins": 100, "completed": True},
+            {"level_id": 2, "stars": 3, "moves": 7, "time": 12.0, "base_coins": 100, "completed": True}
+        ],
+        "current_level": 3
+    }, headers=headers_a)
+
+    prog_a_after = client.get("/api/v1/progress", headers=headers_a).json()
+    assert prog_a_after["total_coins"] == 200
+    assert prog_a_after["current_level"] == 3
+
+    # 2. User B Register
+    u_b_id = uuid.uuid4().hex[:6]
+    u_b_name = f"userB_{u_b_id}"
+    res_b = client.post("/api/v1/auth/register", json={"username": u_b_name, "password": "password123"})
+    assert res_b.status_code == 200
+    token_b = res_b.json()["access_token"]
+    headers_b = {"Authorization": f"Bearer {token_b}"}
+
+    # Verify User B starts at Level 1 (NOT Level 3) with 0 coins (Isolation)
+    prog_b_init = client.get("/api/v1/progress", headers=headers_b).json()
+    assert prog_b_init["current_level"] == 1
+    assert prog_b_init["total_coins"] == 0
+    assert len(prog_b_init["levels"]) == 0
+
+    # 3. User A sends friend request to User B
+    req_res = client.post("/api/v1/friends/request", json={"username": u_b_name}, headers=headers_a)
+    assert req_res.status_code == 200
+
+    # 4. User B checks Notifications and sees Friend Request
+    notif_b = client.get("/api/v1/notifications", headers=headers_b).json()
+    assert notif_b["unread_count"] >= 1
+    friend_notif = next((n for n in notif_b["notifications"] if n["type"] == "friend"), None)
+    assert friend_notif is not None
+
+    # 5. User B accepts Friend Request
+    friends_b_data = client.get("/api/v1/friends", headers=headers_b).json()
+    req_id = friends_b_data["pending_requests"][0]["request_id"]
+    acc_res = client.post("/api/v1/friends/accept", json={"request_id": req_id}, headers=headers_b)
+    assert acc_res.status_code == 200
+
+    # 6. User A checks Friends list and sees User B
+    friends_a_data = client.get("/api/v1/friends", headers=headers_a).json()
+    friend_b_obj = next((f for f in friends_a_data["friends"] if f["username"] == u_b_name), None)
+    assert friend_b_obj is not None
+
+    # 7. User A challenges User B to Level 2
+    chal_res = client.post("/api/v1/friends/challenge", json={"friend_id": friend_b_obj["id"], "level_num": 2}, headers=headers_a)
+    assert chal_res.status_code == 200
+
+    # 8. User B receives challenge notification
+    notif_b2 = client.get("/api/v1/notifications", headers=headers_b).json()
+    chal_notif = next((n for n in notif_b2["notifications"] if n["type"] == "challenge"), None)
+    assert chal_notif is not None

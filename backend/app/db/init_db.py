@@ -7,9 +7,24 @@ from ..models.user import User, PlayerProfile, UserProgressSummary, Settings
 from ..models.game import Level
 from ..core.security import get_password_hash
 
+from sqlalchemy import text
+
 def init_db():
     Base.metadata.create_all(bind=engine)
     
+    # Lightweight auto-migrations for SQLite
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE notifications ADD COLUMN title VARCHAR"))
+            conn.commit()
+        except Exception:
+            pass
+        try:
+            conn.execute(text("ALTER TABLE notifications ADD COLUMN icon VARCHAR"))
+            conn.commit()
+        except Exception:
+            pass
+
     db = Session(bind=engine)
     try:
         # Populate levels 1 to 50 if missing
