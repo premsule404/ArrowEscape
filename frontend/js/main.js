@@ -14,6 +14,7 @@ import { SettingsScreen } from './ui/settings_screen.js';
 import { NavigationManager } from './ui/nav_manager.js';
 import { api } from './api/client.js';
 import { cloudSave } from './services/cloud_save.js';
+import { playerState } from './services/player_state.js';
 
 let currentLevelIndex = 1;
 export let gameLoop = null;
@@ -67,9 +68,21 @@ async function init() {
         updateLoadingProgress(15, "Downloading Cloud Save...");
         await cloudSave.downloadCloudProgress();
 
+        if (localStorage.getItem("access_token")) {
+            try {
+                const me = await api.getMe();
+                await playerState.syncFromCloudUser(me);
+            } catch (e) {
+                console.warn("Failed to fetch initial user info:", e);
+            }
+        }
+
         authScreens = new AuthScreens(async (res) => {
             console.log("Authenticated successfully:", res);
             await cloudSave.downloadCloudProgress();
+            if (res.user) {
+                await playerState.syncFromCloudUser(res.user);
+            }
             if (navManager) navManager.showMainMenu();
             notificationSystem.notify("Welcome Back!", `Logged in as ${res.user?.username || 'Player'}`, "system", "👤");
         });
@@ -246,8 +259,23 @@ if (btnRestartModal) {
     };
 }
 
+// Global Backdrop Overlay Click Handler
+document.addEventListener('click', (e) => {
+    if (e.target && e.target.classList && e.target.classList.contains('overlay') && e.target.id !== 'loading') {
+        e.target.classList.remove('active');
+    }
+});
+
 // Keyboard Accessibility & Hotkeys
 window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const activeModal = document.querySelector('.overlay.active:not(#loading)');
+        if (activeModal) {
+            activeModal.classList.remove('active');
+            return;
+        }
+    }
+
     if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') {
         if (loader.engine) {
             if (loader.engine.is_paused) {

@@ -1,5 +1,6 @@
 import { api } from '../api/client.js';
 import { cloudSave } from '../services/cloud_save.js';
+import { playerState } from '../services/player_state.js';
 
 export class StatsDashboardScreen {
     constructor() {
@@ -10,6 +11,12 @@ export class StatsDashboardScreen {
         this.weeklyChartElem = document.getElementById('stats-weekly-chart');
         
         this.bindEvents();
+
+        playerState.subscribe((state) => {
+            if (this.modal && this.modal.classList.contains('active')) {
+                this.fetchData();
+            }
+        });
     }
 
     bindEvents() {

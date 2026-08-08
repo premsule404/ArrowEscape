@@ -1,5 +1,6 @@
 import { api } from '../api/client.js';
 import { cloudSave } from '../services/cloud_save.js';
+import { playerState } from '../services/player_state.js';
 
 export class DailyRewardsScreen {
     constructor() {
@@ -211,6 +212,10 @@ export class DailyRewardsScreen {
                 cloudSave.localSave.total_coins = res.total_coins;
                 cloudSave.localSave.total_stars = res.total_stars;
                 cloudSave.saveLocalSave();
+                playerState.update({
+                    total_coins: res.total_coins,
+                    total_stars: res.total_stars
+                });
             } else {
                 // Local claim fallback
                 const local = cloudSave.localSave;

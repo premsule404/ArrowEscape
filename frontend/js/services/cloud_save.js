@@ -1,4 +1,5 @@
 import { api } from '../api/client.js';
+import { playerState } from './player_state.js';
 
 export class CloudSaveManager {
     constructor() {
@@ -73,6 +74,15 @@ export class CloudSaveManager {
         this.localSave.current_level = Math.max(this.localSave.current_level || 1, levelNum + 1);
 
         this.saveLocalSave();
+
+        // Immediately notify centralized playerState subscribers!
+        playerState.update({
+            total_coins: this.localSave.total_coins,
+            total_stars: this.localSave.total_stars,
+            current_level: this.localSave.current_level,
+            completed_levels: this.localSave.completed_levels
+        });
+
         await this.syncToCloud();
     }
 
@@ -83,6 +93,12 @@ export class CloudSaveManager {
             this.localSave.boosters[boosterType] = (this.localSave.boosters[boosterType] || 0) + boosterAmount;
         }
         this.saveLocalSave();
+
+        playerState.update({
+            total_coins: this.localSave.total_coins,
+            boosters: this.localSave.boosters
+        });
+
         await this.syncToCloud();
     }
 
@@ -90,6 +106,11 @@ export class CloudSaveManager {
         if (!this.localSave.settings) this.localSave.settings = {};
         Object.assign(this.localSave.settings, settingsData);
         this.saveLocalSave();
+
+        playerState.update({
+            settings: this.localSave.settings
+        });
+
         if (localStorage.getItem("access_token")) {
             try {
                 await api.updateSettings(settingsData);
@@ -99,6 +120,7 @@ export class CloudSaveManager {
 
     async syncToCloud() {
         if (!localStorage.getItem("access_token")) {
+            playerState.syncFromLocalSave();
             return this.localSave;
         }
 
@@ -130,12 +152,21 @@ export class CloudSaveManager {
                 }
                 this.localSave.last_synced_at = new Date().toISOString();
                 this.saveLocalSave();
+
+                playerState.update({
+                    total_coins: this.localSave.total_coins,
+                    total_stars: this.localSave.total_stars,
+                    current_level: this.localSave.current_level,
+                    completed_levels: this.localSave.completed_levels
+                });
+
                 if (window.notificationSystem) {
                     window.notificationSystem.notify("Cloud Sync Complete", "Your game progress is backed up.", "cloud", "☁️");
                 }
             }
         } catch (e) {
             console.warn("Cloud sync deferred:", e.message);
+            playerState.syncFromLocalSave();
             if (window.notificationSystem) {
                 window.notificationSystem.notify("Sync Error", e.message || "Failed to sync cloud save.", "error", "⚠️");
             }
@@ -145,6 +176,7 @@ export class CloudSaveManager {
 
     async downloadCloudProgress() {
         if (!localStorage.getItem("access_token")) {
+            playerState.syncFromLocalSave();
             return this.localSave;
         }
 
@@ -169,10 +201,19 @@ export class CloudSaveManager {
                     });
                 }
                 this.saveLocalSave();
+                
+                playerState.update({
+                    total_coins: this.localSave.total_coins,
+                    total_stars: this.localSave.total_stars,
+                    current_level: this.localSave.current_level,
+                    completed_levels: this.localSave.completed_levels
+                });
+
                 await this.syncToCloud();
             }
         } catch (e) {
             console.warn("Failed to download cloud progress:", e.message);
+            playerState.syncFromLocalSave();
         }
         return this.localSave;
     }

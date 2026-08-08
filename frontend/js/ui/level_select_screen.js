@@ -1,3 +1,5 @@
+import { playerState } from '../services/player_state.js';
+
 export class LevelSelectScreen {
     constructor(onSelectLevelCallback) {
         this.modal = document.getElementById('levelselect-modal');
@@ -8,15 +10,30 @@ export class LevelSelectScreen {
         if (this.btnClose) {
             this.btnClose.onclick = () => this.hide();
         }
+
+        playerState.subscribe((state) => {
+            if (this.modal && this.modal.classList.contains('active')) {
+                this.render(50, state.current_level || 1, state.completed_levels || {});
+            }
+        });
     }
 
-    show(totalLevels = 50, highestUnlocked = 1, levelProgressMap = {}) {
+    show(totalLevels = 50, highestUnlocked = null, levelProgressMap = null) {
+        const state = playerState.state;
+        const curLevel = highestUnlocked || state.current_level || 1;
+        const progressMap = levelProgressMap || state.completed_levels || {};
+        
+        this.render(totalLevels, curLevel, progressMap);
+        if (this.modal) this.modal.classList.add('active');
+    }
+
+    render(totalLevels = 50, highestUnlocked = 1, levelProgressMap = {}) {
         if (!this.grid) return;
         this.grid.innerHTML = '';
         
         for (let i = 1; i <= totalLevels; i++) {
             const isUnlocked = i <= highestUnlocked;
-            const progress = levelProgressMap[i] || { stars: 0, bestTime: 0 };
+            const progress = levelProgressMap[i] || { stars: 0, best_time: 0 };
             
             const card = document.createElement('div');
             card.className = `level-card ${isUnlocked ? 'unlocked' : 'locked'}`;
@@ -56,8 +73,6 @@ export class LevelSelectScreen {
             
             this.grid.appendChild(card);
         }
-        
-        if (this.modal) this.modal.classList.add('active');
     }
 
     hide() {

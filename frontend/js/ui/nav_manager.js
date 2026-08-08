@@ -1,5 +1,6 @@
 import { api } from '../api/client.js';
 import { cloudSave } from '../services/cloud_save.js';
+import { playerState } from '../services/player_state.js';
 
 export class NavigationManager {
     constructor() {
@@ -8,6 +9,7 @@ export class NavigationManager {
         this.gameplayScreen = document.getElementById('gameplay-screen');
         
         this.bindEvents();
+        playerState.subscribe((state) => this.renderMainMenuState(state));
     }
 
     bindEvents() {
@@ -115,6 +117,7 @@ export class NavigationManager {
                 if (window.authScreens) {
                     try {
                         const userData = await api.getMe();
+                        await playerState.syncFromCloudUser(userData);
                         window.authScreens.showProfile(userData);
                     } catch (e) {
                         window.authScreens.showLogin();
@@ -134,6 +137,7 @@ export class NavigationManager {
         if (mmLogout) {
             mmLogout.onclick = async () => {
                 await api.logout();
+                playerState.update({ username: "Local Guest", is_guest: true });
                 this.showWelcomeScreen();
                 if (window.notificationSystem) {
                     window.notificationSystem.notify("Logged Out", "You have been logged out.", "system", "🚪");
@@ -165,7 +169,7 @@ export class NavigationManager {
         if (this.mainMenuScreen) {
             this.mainMenuScreen.classList.remove('hidden');
             this.mainMenuScreen.classList.add('active');
-            this.updateMainMenuUserData();
+            this.renderMainMenuState(playerState.state);
         }
     }
 
@@ -181,13 +185,7 @@ export class NavigationManager {
         }
     }
 
-    updateMainMenuUserData() {
-        const local = cloudSave.localSave;
-        const curLvl = local.current_level || 1;
-        const completedCount = Object.keys(local.completed_levels || {}).length;
-        const totalCoins = local.total_coins || 0;
-        const totalStars = local.total_stars || 0;
-
+    renderMainMenuState(state) {
         const mmCoins = document.getElementById('mm-coins');
         const mmStars = document.getElementById('mm-stars');
         const mmCurLevel = document.getElementById('mm-cur-level');
@@ -196,27 +194,25 @@ export class NavigationManager {
         const mmAvatar = document.getElementById('mm-avatar');
         const mmSyncStatus = document.getElementById('mm-sync-status');
 
-        if (mmCoins) mmCoins.innerText = totalCoins.toLocaleString();
-        if (mmStars) mmStars.innerText = totalStars;
-        if (mmCurLevel) mmCurLevel.innerText = curLvl;
-        if (mmPlayLevel) mmPlayLevel.innerText = curLvl;
+        if (mmCoins) mmCoins.innerText = (state.total_coins || 0).toLocaleString();
+        if (mmStars) mmStars.innerText = state.total_stars || 0;
+        if (mmCurLevel) mmCurLevel.innerText = state.current_level || 1;
+        if (mmPlayLevel) mmPlayLevel.innerText = state.current_level || 1;
+        if (mmUsername) mmUsername.innerText = state.username || "Player";
+        if (mmAvatar) mmAvatar.innerText = state.avatar || "🎯";
 
-        if (localStorage.getItem("access_token")) {
-            if (mmSyncStatus) {
+        if (mmSyncStatus) {
+            if (!state.is_guest && localStorage.getItem("access_token")) {
                 mmSyncStatus.innerText = "🟢 Cloud Synced";
                 mmSyncStatus.className = "sync-status-badge synced";
-            }
-            api.getMe().then(user => {
-                if (mmUsername) mmUsername.innerText = user.username || "Player";
-                if (mmAvatar) mmAvatar.innerText = user.avatar || "🎯";
-            }).catch(() => {});
-        } else {
-            if (mmSyncStatus) {
+            } else {
                 mmSyncStatus.innerText = "📶 Offline Guest";
                 mmSyncStatus.className = "sync-status-badge offline";
             }
-            if (mmUsername) mmUsername.innerText = "Local Guest";
-            if (mmAvatar) mmAvatar.innerText = "🎯";
         }
+    }
+
+    updateMainMenuUserData() {
+        this.renderMainMenuState(playerState.state);
     }
 }

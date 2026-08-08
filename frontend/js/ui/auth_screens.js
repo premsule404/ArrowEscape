@@ -1,5 +1,6 @@
 import { api } from '../api/client.js';
 import { cloudSave } from '../services/cloud_save.js';
+import { playerState } from '../services/player_state.js';
 
 export class AuthScreens {
     constructor(onAuthSuccessCallback) {
@@ -89,10 +90,23 @@ export class AuthScreens {
             this.showLogin();
         };
         
-        // Close Buttons
-        document.querySelectorAll('.auth-close-btn').forEach(btn => {
-            btn.onclick = () => this.hideAll();
-        });
+        // Close Buttons for Auth Modals
+        if (this.loginModal) {
+            const btnClose = this.loginModal.querySelector('.close-btn');
+            if (btnClose) btnClose.onclick = () => this.hideAll();
+        }
+        if (this.registerModal) {
+            const btnClose = this.registerModal.querySelector('.close-btn');
+            if (btnClose) btnClose.onclick = () => this.hideAll();
+        }
+        if (this.upgradeModal) {
+            const btnClose = this.upgradeModal.querySelector('.close-btn');
+            if (btnClose) btnClose.onclick = () => this.hideAll();
+        }
+        if (this.profileModal) {
+            const btnClose = this.profileModal.querySelector('.close-btn');
+            if (btnClose) btnClose.onclick = () => this.hideAll();
+        }
         
         // Login Submit
         const formLogin = document.getElementById('form-login');
@@ -267,23 +281,24 @@ export class AuthScreens {
         this.hideAll();
         try {
             const data = await api.getProfile();
+            playerState.syncFromCloudUser(data);
             this.populateProfileData(data);
             if (this.profileModal) this.profileModal.classList.add('active');
         } catch (e) {
-            // Fallback to local save stats if offline / guest
-            const local = cloudSave.localSave;
-            const completedCount = Object.keys(local.completed_levels || {}).length;
+            // Fallback to centralized playerState stats if offline / guest
+            const state = playerState.state;
+            const completedCount = state.completed_count || Object.keys(state.completed_levels || {}).length;
             const pct = Math.round((completedCount / 50) * 100);
 
             this.populateProfileData({
-                username: "Local Player",
-                email: "N/A",
-                is_guest: true,
-                avatar: "🎯",
-                total_coins: local.total_coins || 0,
-                total_stars: local.total_stars || 0,
-                current_level: local.current_level || 1,
-                highest_level: local.current_level || 1,
+                username: state.username || "Local Guest",
+                email: state.email || "N/A",
+                is_guest: state.is_guest,
+                avatar: state.avatar || "🎯",
+                total_coins: state.total_coins || 0,
+                total_stars: state.total_stars || 0,
+                current_level: state.current_level || 1,
+                highest_level: state.highest_level || state.current_level || 1,
                 games_played: completedCount,
                 games_won: completedCount,
                 completion_pct: pct,

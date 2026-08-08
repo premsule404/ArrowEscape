@@ -1,5 +1,6 @@
 import { api } from '../api/client.js';
 import { cloudSave } from '../services/cloud_save.js';
+import { playerState } from '../services/player_state.js';
 
 export class ShopScreen {
     constructor() {
@@ -13,6 +14,15 @@ export class ShopScreen {
         this.currentCategory = 'themes';
         this.shopData = null;
         this.bindEvents();
+
+        playerState.subscribe((state) => {
+            if (this.coinsElem) this.coinsElem.innerText = (state.total_coins || 0).toLocaleString();
+            if (this.starsElem) this.starsElem.innerText = state.total_stars || 0;
+            if (this.shopData) {
+                this.shopData.coins = state.total_coins || 0;
+                this.shopData.stars = state.total_stars || 0;
+            }
+        });
     }
 
     bindEvents() {
@@ -182,17 +192,31 @@ export class ShopScreen {
                 cloudSave.localSave.total_coins = res.total_coins;
                 cloudSave.localSave.total_stars = res.total_stars;
                 cloudSave.saveLocalSave();
+                playerState.update({
+                    total_coins: res.total_coins,
+                    total_stars: res.total_stars
+                });
             } else {
                 const item = this.shopData.items.find(i => i.id === itemId);
                 if (item) {
                     if (item.price > 0) {
-                        cloudSave.localSave.total_coins -= item.price;
+                        cloudSave.localSave.total_coins = Math.max(0, (cloudSave.localSave.total_coins || 0) - item.price);
+                    }
+                    if (item.star_cost > 0) {
+                        cloudSave.localSave.total_stars = Math.max(0, (cloudSave.localSave.total_stars || 0) - item.star_cost);
+                    }
+                    if (item.amount > 0 && item.type === 'coins') {
+                        cloudSave.localSave.total_coins = (cloudSave.localSave.total_coins || 0) + item.amount;
                     }
                     if (!cloudSave.localSave.owned_items) cloudSave.localSave.owned_items = ["theme_neon", "skin_classic", "board_slate"];
                     if (!cloudSave.localSave.owned_items.includes(itemId)) {
                         cloudSave.localSave.owned_items.push(itemId);
                     }
                     cloudSave.saveLocalSave();
+                    playerState.update({
+                        total_coins: cloudSave.localSave.total_coins,
+                        total_stars: cloudSave.localSave.total_stars
+                    });
                 }
             }
             alert("Purchase successful!");

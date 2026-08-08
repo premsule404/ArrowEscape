@@ -40,7 +40,8 @@ export class GameLoop {
     }
 
     setupEngineEvents() {
-        if (!loader.engine) return;
+        if (!loader.engine || this.engineEventsBound) return;
+        this.engineEventsBound = true;
         
         loader.engine.events.add_listener("on_wrong_move", (data) => {
             this.syncHUD();

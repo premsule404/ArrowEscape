@@ -1,4 +1,5 @@
 import { api } from '../api/client.js';
+import { playerState } from '../services/player_state.js';
 
 export class LeaderboardScreen {
     constructor() {
@@ -11,6 +12,12 @@ export class LeaderboardScreen {
         this.activeTimeframe = "all_time";
         
         this.bindEvents();
+
+        playerState.subscribe((state) => {
+            if (this.modal && this.modal.classList.contains('active')) {
+                this.fetchAndRender();
+            }
+        });
     }
 
     bindEvents() {
