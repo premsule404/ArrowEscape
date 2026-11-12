@@ -40,8 +40,8 @@ export class GameLoop {
     }
 
     setupEngineEvents() {
-        if (!loader.engine || this.engineEventsBound) return;
-        this.engineEventsBound = true;
+        if (!loader.engine || this.boundEngine === loader.engine) return;
+        this.boundEngine = loader.engine;
         
         loader.engine.events.add_listener("on_wrong_move", (data) => {
             this.syncHUD();
@@ -70,7 +70,7 @@ export class GameLoop {
             const moves = loader.engine.moves_count || 0;
             const time = loader.engine.elapsed_time || 0;
             const levelNum = loader.engine.level_num || 1;
-            const levelName = document.getElementById('level-title') ? document.getElementById('level-title').innerText : `Level ${levelNum}`;
+            const levelName = loader.engine.level_name || (document.getElementById('level-title') ? document.getElementById('level-title').innerText : `Level ${levelNum}`);
             
             showVictoryCelebration(levelName, stars, coins, time);
             await cloudSave.saveLevelCompletion(levelNum, stars, moves, time, coins);

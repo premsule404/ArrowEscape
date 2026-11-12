@@ -52,13 +52,16 @@ class AuthService:
         }
 
     def register_user(self, username: str, password: str, email: str = None, display_name: str = None) -> dict:
-        existing_user = self.player_repo.get_by_username(username)
+        clean_username = username.strip() if username else ""
+        clean_email = email.strip() if email else None
+        
+        existing_user = self.player_repo.get_by_username(clean_username)
         if existing_user:
             raise HTTPException(status_code=400, detail="Username is already taken.")
             
         user = User(
-            username=username,
-            email=email,
+            username=clean_username,
+            email=clean_email,
             password_hash=get_password_hash(password),
             is_guest=False,
             is_admin=False
@@ -67,7 +70,7 @@ class AuthService:
         self.db.commit()
         self.db.refresh(user)
         
-        profile = PlayerProfile(user_id=user.id, display_name=display_name or username)
+        profile = PlayerProfile(user_id=user.id, display_name=display_name or clean_username)
         summary = UserProgressSummary(user_id=user.id, current_level=1, highest_unlocked_level=1)
         settings = Settings(user_id=user.id)
         
@@ -91,7 +94,8 @@ class AuthService:
         }
 
     def login_user(self, username: str, password: str, ip_address: str = None, user_agent: str = None) -> dict:
-        user = self.player_repo.get_by_username(username)
+        clean_username = username.strip() if username else ""
+        user = self.player_repo.get_by_username(clean_username)
         if not user or not user.password_hash or not verify_password(password, user.password_hash):
             if user:
                 self.auth_repo.log_session(user.id, ip_address, user_agent, success=False)
@@ -118,12 +122,15 @@ class AuthService:
         if not guest_user or not guest_user.is_guest:
             raise HTTPException(status_code=400, detail="User is not a guest account.")
             
-        existing_username = self.player_repo.get_by_username(username)
+        clean_username = username.strip() if username else ""
+        clean_email = email.strip() if email else None
+        
+        existing_username = self.player_repo.get_by_username(clean_username)
         if existing_username and existing_username.id != guest_user_id:
             raise HTTPException(status_code=400, detail="Username is already taken.")
             
-        guest_user.username = username
-        guest_user.email = email
+        guest_user.username = clean_username
+        guest_user.email = clean_email
         guest_user.password_hash = get_password_hash(password)
         guest_user.is_guest = False
         self.db.commit()

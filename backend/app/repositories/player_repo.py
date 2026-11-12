@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from ..models.user import User, PlayerProfile, Settings
 
+from sqlalchemy import func
+
 class PlayerRepository:
     def __init__(self, db: Session):
         self.db = db
@@ -10,7 +12,10 @@ class PlayerRepository:
         return self.db.query(User).filter(User.id == user_id).first()
 
     def get_by_username(self, username: str) -> Optional[User]:
-        return self.db.query(User).filter(User.username == username).first()
+        if not username:
+            return None
+        clean = username.strip()
+        return self.db.query(User).filter(func.lower(User.username) == func.lower(clean)).first()
 
     def get_profile(self, user_id: int) -> Optional[PlayerProfile]:
         return self.db.query(PlayerProfile).filter(PlayerProfile.user_id == user_id).first()

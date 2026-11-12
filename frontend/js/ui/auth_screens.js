@@ -17,6 +17,12 @@ export class AuthScreens {
         
         this.currentAvatar = "🎯";
         this.bindEvents();
+
+        playerState.subscribe((state) => {
+            if (this.profileModal && this.profileModal.classList.contains('active')) {
+                this.loadAndShowProfile();
+            }
+        });
     }
 
     validateEmail(email) {
@@ -290,35 +296,46 @@ export class AuthScreens {
 
     async loadAndShowProfile() {
         this.hideAll();
-        try {
-            const data = await api.getProfile();
-            playerState.syncFromCloudUser(data);
-            this.populateProfileData(data);
-            if (this.profileModal) this.profileModal.classList.add('active');
-        } catch (e) {
-            // Fallback to centralized playerState stats if offline / guest
-            const state = playerState.state;
-            const completedCount = state.completed_count || Object.keys(state.completed_levels || {}).length;
-            const pct = Math.round((completedCount / 50) * 100);
+        const state = playerState.state;
+        const completedCount = state.completed_count || Object.keys(state.completed_levels || {}).length;
+        const pct = Math.round((completedCount / 50) * 100);
 
-            this.populateProfileData({
-                username: state.username || "Local Guest",
-                email: state.email || "N/A",
-                is_guest: state.is_guest,
-                avatar: state.avatar || "🎯",
-                total_coins: state.total_coins || 0,
-                total_stars: state.total_stars || 0,
-                current_level: state.current_level || 1,
-                highest_level: state.highest_level || state.current_level || 1,
-                games_played: completedCount,
-                games_won: completedCount,
-                completion_pct: pct,
-                best_time: 0,
-                best_score: 0,
-                date_joined: "Offline",
-                last_login: "Just Now"
-            });
-            if (this.profileModal) this.profileModal.classList.add('active');
+        const combinedData = {
+            username: state.username || "Player",
+            email: state.email || "N/A",
+            is_guest: state.is_guest,
+            avatar: state.avatar || "🎯",
+            total_coins: state.total_coins || 0,
+            total_stars: state.total_stars || 0,
+            current_level: state.current_level || 1,
+            highest_level: state.highest_level || state.current_level || 1,
+            games_played: state.games_played || completedCount,
+            games_won: state.games_won || completedCount,
+            completion_pct: pct,
+            best_time: state.best_time || 0,
+            best_score: state.best_score || 0,
+            date_joined: state.date_joined || "Active",
+            last_login: "Just Now"
+        };
+
+        this.populateProfileData(combinedData);
+        if (this.profileModal) this.profileModal.classList.add('active');
+
+        if (!state.is_guest && localStorage.getItem("access_token")) {
+            try {
+                const remote = await api.getProfile();
+                if (remote) {
+                    combinedData.username = remote.display_name || remote.username || combinedData.username;
+                    combinedData.avatar = remote.avatar || combinedData.avatar;
+                    combinedData.email = remote.email || combinedData.email;
+                    if (remote.created_at) {
+                        combinedData.date_joined = new Date(remote.created_at).toLocaleDateString();
+                    }
+                    this.populateProfileData(combinedData);
+                }
+            } catch (e) {
+                console.warn("Could not fetch remote profile details:", e);
+            }
         }
     }
 

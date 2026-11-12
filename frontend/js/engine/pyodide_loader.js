@@ -164,6 +164,10 @@ engine, metadata = LevelParser.load_from_json(level_dict)
         this.engine = this.pyodide.globals.get("engine");
         const meta = this.pyodide.globals.get("metadata");
         
+        const num = typeof levelNumOrId === 'number' ? levelNumOrId : (parseInt((meta.id || '').replace('level', ''), 10) || 1);
+        this.engine.level_num = num;
+        this.engine.level_name = meta.name || `Level ${num}`;
+        
         return meta;
     }
 }

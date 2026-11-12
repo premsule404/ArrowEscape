@@ -48,7 +48,11 @@ export class NavigationManager {
         // Main Menu Grid Buttons
         const mmPlay = document.getElementById('mm-btn-play');
         if (mmPlay) {
-            mmPlay.onclick = () => {
+            mmPlay.onclick = async () => {
+                const lvlToPlay = playerState.state.current_level || 1;
+                if (window.loadLevelByIndex) {
+                    await window.loadLevelByIndex(lvlToPlay);
+                }
                 this.showGameplayScreen();
             };
         }
@@ -57,7 +61,7 @@ export class NavigationManager {
         if (mmLevelSelect) {
             mmLevelSelect.onclick = () => {
                 if (window.levelSelectScreen) {
-                    window.levelSelectScreen.show(50, cloudSave.localSave.current_level || 1, cloudSave.localSave.completed_levels || {});
+                    window.levelSelectScreen.show(50, playerState.state.current_level || 1, playerState.state.completed_levels || {});
                 }
             };
         }

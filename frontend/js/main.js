@@ -56,6 +56,7 @@ async function loadLevelByIndex(idx) {
         gameLoop.start();
     }
 }
+window.loadLevelByIndex = loadLevelByIndex;
 
 async function init() {
     try {
@@ -211,11 +212,19 @@ if (btnUndo) {
 const btnNext = document.getElementById('btn-next');
 if (btnNext) {
     btnNext.onclick = async () => {
-        hideVictory();
-        currentLevelIndex++;
-        if (currentLevelIndex > 50) currentLevelIndex = 1;
-        await loadLevelByIndex(currentLevelIndex);
-        if (navManager) navManager.showGameplayScreen();
+        if (btnNext.disabled) return;
+        btnNext.disabled = true;
+        try {
+            hideVictory();
+            let nextLvl = playerState.state.current_level || (currentLevelIndex + 1);
+            if (nextLvl > 50) nextLvl = 1;
+            await loadLevelByIndex(nextLvl);
+            if (navManager) navManager.showGameplayScreen();
+        } catch (e) {
+            console.error("Failed to load next level:", e);
+        } finally {
+            btnNext.disabled = false;
+        }
     };
 }
 
@@ -236,7 +245,7 @@ if (btnSelectCelebration) {
     btnSelectCelebration.onclick = () => {
         hideVictory();
         if (levelSelectScreen) {
-            levelSelectScreen.show(50, cloudSave.localSave.current_level || 1, cloudSave.localSave.completed_levels || {});
+            levelSelectScreen.show(50, playerState.state.current_level || 1, playerState.state.completed_levels || {});
         }
     };
 }

@@ -6,14 +6,26 @@ from jose import JWTError, jwt
 from .config import settings
 
 def get_password_hash(password: str) -> str:
-    """Secure SHA-256 PBKDF2 password hashing."""
-    salt = settings.SECRET_KEY.encode('utf-8')
-    key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-    return key.hex()
+    """Secure SHA-256 PBKDF2 password hashing with embedded salt."""
+    import secrets
+    salt = secrets.token_hex(16)
+    key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000).hex()
+    return f"{salt}${key}"
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify password against SHA-256 PBKDF2 hash."""
-    return hmac.compare_digest(get_password_hash(plain_password), hashed_password)
+    if not hashed_password or not plain_password:
+        return False
+    if "$" in hashed_password:
+        parts = hashed_password.split("$", 1)
+        if len(parts) == 2:
+            salt, key = parts
+            check_key = hashlib.pbkdf2_hmac('sha256', plain_password.encode('utf-8'), salt.encode('utf-8'), 100000).hex()
+            return hmac.compare_digest(check_key, key)
+    # Legacy fallback for single-string hashes
+    salt = settings.SECRET_KEY.encode('utf-8')
+    key = hashlib.pbkdf2_hmac('sha256', plain_password.encode('utf-8'), salt, 100000).hex()
+    return hmac.compare_digest(key, hashed_password)
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()
